@@ -1,0 +1,438 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a}
+.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:6px 12px;border-radius:8px;border:0.5px solid #ccc;background:#f5f5f5;cursor:pointer;font-size:12px;font-weight:500;color:#555}
+.tab.active{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+.exports{display:flex;gap:6px;align-items:center}
+.btn{padding:6px 12px;border-radius:8px;border:0.5px solid #ccc;background:#fff;cursor:pointer;font-size:12px;font-weight:500;color:#1a1a1a;display:flex;align-items:center;gap:4px}
+.btn:hover{background:#f5f5f5}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+.view{display:none}
+.view.active{display:block}
+#capture-area{background:#fff;padding:12px;border-radius:8px;border:0.5px solid #e0e0e0}
+.legend-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.leg{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th,td{border:0.5px solid #ddd;padding:5px 7px;vertical-align:top;font-size:11px;word-break:break-word}
+th{background:#f5f5f5;font-weight:500;font-size:11px;color:#555;text-align:center}
+.tc{background:#f9f9f9;font-size:10px;font-weight:500;color:#888;text-align:right;white-space:nowrap;width:52px}
+.bl{border-radius:4px;padding:3px 5px;margin:2px 0;font-size:10px;line-height:1.4;display:block}
+.cat{background:#f7dbe5;color:#10579d}
+.gam{background:#EAF3DE;color:#27500A}
+.dom{background:#d3a2f5;color:#351e04}
+.waf{background:#FBEAF0;color:#72243E}
+.zathral{background:#90ede2;color:#271818}
+.lun{background:#f0f0f0;color:#999;font-style:italic}
+.el{opacity:0.6;font-style:italic}
+.nm{font-weight:600;font-size:9px;display:block;margin-bottom:1px}
+.note{font-size:10px;color:#888;margin-top:8px;padding:6px 8px;background:#f9f9f9;border-radius:6px}
+#status{font-size:11px;color:#888}
+</style>
+<div style="padding:0.5rem 0">
+<div class="toolbar">
+  <div class="tabs">
+    <div class="tab active" onclick="show('all',this)">All</div>
+    <div class="tab" onclick="show('cat',this)">Catsium</div>
+      <div class="tab" onclick="show('dom',this)">Dom</div>
+    <div class="tab" onclick="show('gam',this)">Game</div>
+    <div class="tab" onclick="show('waf',this)">Waffles</div>
+    <div class="tab" onclick="show('zathral',this)">Zathral</div>
+  </div>
+  <div class="exports">
+    <button class="btn" onclick="exportPNG()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"/><path d="M2 9l3-3 3 3 2-2 4 3"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/></svg>PNG
+    </button>
+    <button class="btn" onclick="exportCSV()">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h7l3 3v9H3V2z"/><path d="M10 2v3h3"/><path d="M5 9h6M5 11.5h4"/></svg>CSV
+    </button>
+    <span id="status"></span>
+  </div>
+</div>
+
+<div id="capture-area">
+<div class="legend-row">
+  <span class="leg cat">Catsium (AI And Data)</span>
+  <span class="leg dom">Dom (Applied AI)</span>
+</div>
+
+<!-- ALL VIEW -->
+<div class="view active" id="view-all">
+<div style="overflow-x:auto"><table>
+<thead><tr><th class="tc">Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+<tbody>
+<tr><td class="tc">08:00</td>
+  <td></td><td></td><td></td>
+  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic &amp; Mathematics — Lecture</span></td>
+  <td><span class="bl zathral"><span class="nm">Zathral · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td></tr>
+<!-- 9-10 classes-->
+<tr><td class="tc">09:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
+  <!-- Wednesday-->
+  <td></td>
+  <!-- Thursday-->
+  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics &amp; Visualization · 03-08-29</span></td>
+  <!-- Friday-->
+  <td><span class="bl cat el"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization (E-Learning)</span><span class="bl zathral"><span class="nm">Zathral · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td></tr>`
+<!-- 10-11 classes -->
+<tr><td class="tc">10:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span><span class="bl zathral el"><span class="nm">Zathral · COMT</span>Data Processing and Visualisation (E Learning)</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · PEM</span>Homeroom · S.310 SEG</span></td>
+  <!-- Thursday-->
+  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics &amp; Visualization · 03-08-29</span></td>
+  <!-- Friday-->
+  <td><span class="bl zathral"><span class="nm">Zathral · DSM</span>Data Security &amp; Management · S.342 SEG</span></td></tr>
+<!-- 11-12 classes -->
+  <tr><td class="tc">11:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability &amp; Climate Action · 03-06-50</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics &amp; Visualization · 03-06-55</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl zathral"><span class="nm">Zathral · PEM</span>Homeroom · S.306 SEG</span></td>
+  <!-- Thursday-->
+  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span><span class="bl zathral"><span class="nm">Zathral · CCD</span>Cloud Computing Development · P.507</span></td></td>
+  <!-- Friday-->
+  <td><span class="bl zathral"><span class="nm">Zathral · Data Security &amp; Management</span>DSM · S.342 SEG</span></td></tr>
+<!-- 12-13 classes -->
+<tr><td class="tc">12:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability &amp; Climate Action · 03-06-50</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics &amp; Visualization · 03-06-55</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
+  <!-- Thursday-->
+  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 13-14 classes -->
+<tr><td class="tc">13:00</td> 
+  <!-- Monday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span><span class="bl lun"><span class="nm">Dom</span>🍽 Lunch</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 14-15 classes -->
+<tr><td class="tc">14:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch (cont)</span><span class="bl dom"><span class="nm">Dom · Homeroom</span>Homeroom</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security &amp; Management · S.342 SEG</span><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 15-16 classes -->
+<tr><td class="tc">15:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · EVOGMS</span>Evolution of Games · M.414 SDM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX &amp; Interface Design · 03-08-29/1</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security &amp; Management · S.342 SEG</span><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 16-17 classes -->
+<tr><td class="tc">16:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · GS-UCL</span>Understanding Contracts &amp; The Law · LTD-5 SBM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX &amp; Interface Design · 03-08-29/1</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic &amp; Mathematics · 03-07-50</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 17-18 classes -->
+<tr><td class="tc">17:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ARTSAP</span>Visual Arts Appreciation · N1.813 SDM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX &amp; Interface Design · 03-08-29/1</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic &amp; Mathematics · 03-07-50</span></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 18-19 classes -->
+<tr><td class="tc">18:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td></td>
+  <!-- Wednesday-->
+  <td><span class="bl dom el"><span class="nm">Dom · SCA</span>Sustainability &amp; Climate Action (E-Learning)</span></td>
+  <!-- Thursday-->
+  <td><span class="bl dom el"><span class="nm">Dom · EPL</span>Effective Personal Leadership (E-Learning)</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+</tbody></table></div>
+<p class="note">Italic/faded = e-learning. Game &amp; Waffles schedules to be added.</p>
+</div>
+
+<!-- CATSIUM -->
+<div class="view" id="view-cat">
+<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+<tbody>
+<tr><td class="tc">08:00</td>
+  <td></td><td></td><td></td>
+  <td></td>
+  <td></td></tr>
+<!-- 9-10 classes-->
+<tr><td class="tc">09:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
+  <!-- Tuesday-->
+  <td></td>
+  <!-- Wednesday-->
+  <td></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td><span class="bl cat el"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization (E-Learning)</span></td></tr>`
+<!-- 10-11 classes -->
+<tr><td class="tc">10:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · PEM</span>Homeroom · S.310 SEG</span></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 11-12 classes -->
+  <tr><td class="tc">11:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 12-13 classes -->
+<tr><td class="tc">12:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep &amp; Visualization · S.310 SEG</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 13-14 classes -->
+<tr><td class="tc">13:00</td>
+  <!-- Monday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 14-15 classes -->
+<tr><td class="tc">14:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch (cont)</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security &amp; Management · S.342 SEG</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 15-16 classes -->
+<tr><td class="tc">15:00</td>
+  <!-- Monday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · EVOGMS</span>Evolution of Games · M.414 SDM</span></td>
+  <!-- Wednesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security &amp; Management · S.342 SEG</span></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 16-17 classes -->
+<tr><td class="tc">16:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · GS-UCL</span>Understanding Contracts &amp; The Law · LTD-5 SBM</span></td>
+  <!-- Wednesday-->
+  <td></td>
+  <!-- Thursday-->
+  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 17-18 classes -->
+<tr><td class="tc">17:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td><span class="bl cat"><span class="nm">Catsium · ARTSAP</span>Visual Arts Appreciation · N1.813 SDM</span></td>
+  <!-- Wednesday-->
+  <td></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+<!-- 18-19 classes -->
+<tr><td class="tc">18:00</td>
+  <!-- Monday-->
+  <td></td>
+  <!-- Tuesday-->
+  <td></td>
+  <!-- Wednesday-->
+  <td></td>
+  <!-- Thursday-->
+  <td></td>
+  <!-- Friday-->
+  <td></td></tr>
+</tbody></table>
+<p class="note">AML meets twice: MON 09–12 and WED 11–13. FRI = DPV e-learning only (09–10).</p>
+</div>
+
+<!-- GAME -->
+<div class="view" id="view-gam">
+<p class="note" style="margin-top:0">Game's schedule hasn't been added yet.</p>
+</div>
+
+<!-- DOM -->
+<div class="view" id="view-dom">
+<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
+<tbody>
+<tr><td class="tc">08:00–09:00</td>
+  <td></td><td></td><td></td>
+  <td><span class="bl dom"><span class="nm">LOMA</span>Logic &amp; Mathematics<br>Lecture</span></td>
+  <td></td></tr>
+<tr><td class="tc">09:00–11:00</td>
+  <td><span class="bl dom"><span class="nm">COMT</span>Computational Thinking<br>03-06-50</span></td>
+  <td><span class="bl dom"><span class="nm">COMT</span>Computational Thinking<br>03-06-55</span></td>
+  <td></td>
+  <td><span class="bl dom"><span class="nm">DAVA</span>Data Analytics &amp; Visualization<br>03-08-29</span></td>
+  <td>Free</td></tr>
+<tr><td class="tc">11:00–13:00</td>
+  <td><span class="bl dom"><span class="nm">SCA</span>Sustainability &amp; Climate Action<br>03-06-50</span></td>
+  <td><span class="bl dom"><span class="nm">DAVA</span>Data Analytics &amp; Visualization<br>03-06-55</span></td>
+  <td></td>
+  <td><span class="bl dom"><span class="nm">EPL</span>Effective Personal Leadership<br>03-08-29</span></td>
+  <td>Free</td></tr>
+<tr><td class="tc">13:00–14:00</td>
+  <td></td>
+  <td><span class="bl lun">🍽 Lunch</span></td>
+  <td></td><td></td><td></td></tr>
+<tr><td class="tc">14:00–15:00</td>
+  <td></td>
+  <td><span class="bl dom"><span class="nm">PC Hour</span>Pastoral Care Hour<br>N/A</span></td>
+  <td><span class="bl dom"><span class="nm">CYFUN</span>Cybersecurity Fundamentals<br>03-07-50</span></td>
+  <td></td><td>Free</td></tr>
+<tr><td class="tc">15:00–18:00</td>
+  <td></td>
+  <td><span class="bl dom"><span class="nm">UXID</span>UX &amp; Interface Design<br>03-08-29/1</span></td>
+  <td></td><td></td><td>Free</td></tr>
+<tr><td class="tc">16:00–18:00</td>
+  <td></td><td></td>
+  <td><span class="bl dom"><span class="nm">LOMA</span>Logic &amp; Mathematics<br>03-07-50</span></td>
+  <td></td><td>Free</td></tr>
+<tr><td class="tc">18:00–19:00</td>
+  <td></td><td></td>
+  <td><span class="bl dom el"><span class="nm">SCA</span>Sustainability &amp; Climate Action<br>e-Learning</span></td>
+  <td></td><td></td></tr>
+</tbody></table>
+<p class="note">CYFUN WED runs 14–16. LOMA lecture THU 08–09, tutorial WED 16–18.</p>
+</div>
+
+<!-- WAFFLES -->
+<div class="view" id="view-waf">
+<p class="note" style="margin-top:0">Waffles' schedule hasn't been added yet.</p>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function show(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  el.classList.add('active');
+}
+function setStatus(msg,t){const s=document.getElementById('status');s.textContent=msg;if(t)setTimeout(()=>s.textContent='',t);}
+function exportPNG(){
+  setStatus('Generating...');
+  html2canvas(document.getElementById('capture-area'),{scale:2,backgroundColor:'#ffffff'}).then(c=>{
+    const a=document.createElement('a');a.download='group_schedule.png';a.href=c.toDataURL('image/png');a.click();
+    setStatus('Downloaded!',2500);
+  }).catch(()=>setStatus('Error, try again',2500));
+}
+const csvData=[
+  ['Person','Day','Time','Code','Module','Room'],
+  ['Catsium','Monday','09:00-12:00','AML','Applied Machine Learning','S.310 SEG'],
+  ['Catsium','Monday','11:00-13:00','CCD','Cloud Computing Development','S.310 SEG'],
+  ['Catsium','Monday','13:00-14:00','—','Lunch','—'],
+  ['Catsium','Monday','14:00-16:00','DEP','Data Engineering Project','S.130A SEG'],
+  ['Catsium','Tuesday','10:00-13:00','DPV','Data Preparation and Visualization','S.310 SEG'],
+  ['Catsium','Tuesday','13:00-15:00','—','Lunch','—'],
+  ['Catsium','Tuesday','15:00-16:00','EVOGMS','Evolution of Games','M.414 SDM'],
+  ['Catsium','Tuesday','16:00-17:00','GS-UCL','Understanding Contracts and The Law','LTD-5 SBM'],
+  ['Catsium','Tuesday','17:00-18:00','ARTSAP','Visual Arts Appreciation','N1.813 SDM'],
+  ['Catsium','Wednesday','10:00-11:00','PEM','Homeroom','S.310 SEG'],
+  ['Catsium','Wednesday','11:00-13:00','AML','Applied Machine Learning','S.310 SEG'],
+  ['Catsium','Wednesday','13:00-14:00','—','Lunch','—'],
+  ['Catsium','Wednesday','14:00-16:00','DSM','Data Security and Management','S.342 SEG'],
+  ['Catsium','Thursday','13:00-15:00','ICSD','Intelligent Control System and Development','R.412 SEG'],
+  ['Catsium','Thursday','15:00-17:00','SDCA','Sensor Data Collection and Analysis','S.373 SEG'],
+  ['Catsium','Friday','09:00-10:00','DPV','Data Preparation and Visualization','E-Learning'],
+  ['Dom','Monday','09:00-11:00','COMT','Computational Thinking','03-06-50'],
+  ['Dom','Monday','11:00-13:00','SCA','Sustainability and Climate Action','03-06-50'],
+  ['Dom','Tuesday','09:00-11:00','COMT','Computational Thinking','03-06-55'],
+  ['Dom','Tuesday','11:00-13:00','DAVA','Data Analytics and Visualization','03-06-55'],
+  ['Dom','Tuesday','13:00-14:00','—','Lunch','—'],
+  ['Dom','Tuesday','14:00-15:00','Homeroom','Homeroom','N/A'],
+  ['Dom','Tuesday','15:00-18:00','UXID','User Experience and Interface Design','03-08-29/1'],
+  ['Dom','Wednesday','14:00-16:00','CYFUN','Cybersecurity Fundamentals','03-07-50'],
+  ['Dom','Wednesday','16:00-18:00','LOMA','Logic and Mathematics','03-07-50'],
+  ['Dom','Wednesday','18:00-19:00','SCA','Sustainability and Climate Action','e-Learning'],
+  ['Dom','Thursday','08:00-09:00','LOMA','Logic and Mathematics','Lecture'],
+  ['Dom','Thursday','09:00-11:00','DAVA','Data Analytics and Visualization','03-08-29'],
+  ['Dom','Thursday','11:00-13:00','EPL','Effective Personal Leadership','03-08-29'],
+];
+function exportCSV(){
+  const csv=csvData.map(r=>r.map(c=>'"'+c+'"').join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='group_schedule.csv';a.click();
+  setStatus('Downloaded!',2500);
+}
+</script>
