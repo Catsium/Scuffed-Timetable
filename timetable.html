@@ -30,6 +30,13 @@ th{background:#f5f5f5;font-weight:500;font-size:11px;color:#555;text-align:cente
 .nm{font-weight:600;font-size:9px;display:block;margin-bottom:1px}
 .note{font-size:10px;color:#888;margin-top:8px;padding:6px 8px;background:#f9f9f9;border-radius:6px}
 #status{font-size:11px;color:#888}
+#filter-bar{display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;background:#f9f9f9;border-radius:8px;border:0.5px solid #e0e0e0}
+#filter-bar.visible{display:flex}
+.filter-bar-label{font-size:11px;color:#888;font-weight:500;margin-right:2px}
+.ftag{padding:4px 10px;border-radius:6px;border:1.5px solid transparent;cursor:pointer;font-size:11px;font-weight:600;opacity:0.35;transition:opacity .15s,border-color .15s}
+.ftag.on{opacity:1;border-color:rgba(0,0,0,0.2)}
+.ftag-all{padding:4px 10px;border-radius:6px;border:0.5px solid #ccc;background:#fff;cursor:pointer;font-size:11px;color:#555;margin-left:2px}
+.bl.hidden-person{display:none!important}
 </style>
 <div style="padding:0.5rem 0">
 <div class="toolbar">
@@ -54,6 +61,17 @@ th{background:#f5f5f5;font-weight:500;font-size:11px;color:#555;text-align:cente
 </div>
 
 <div id="capture-area">
+<div id="filter-bar">
+  <span class="filter-bar-label">Show:</span>
+  <button class="ftag on" id="ftag-cat" style="background:#f7dbe5;color:#10579d;border-color:#f7dbe5" onclick="toggleFilter('cat')">Catsium</button>
+  <button class="ftag on" id="ftag-dom" style="background:#d3a2f5;color:#351e04;border-color:#d3a2f5" onclick="toggleFilter('dom')">Dom</button>
+  <button class="ftag on" id="ftag-zathral" style="background:#90ede2;color:#271818;border-color:#90ede2" onclick="toggleFilter('zathral')">Zathral</button>
+  <button class="ftag on" id="ftag-shad" style="background:#e8d5b7;color:#5c4a3d;border-color:#e8d5b7" onclick="toggleFilter('shad')">Shadow</button>
+  <button class="ftag on" id="ftag-gam" style="background:#d4e8f0;color:#1e3a5f;border-color:#d4e8f0" onclick="toggleFilter('gam')">Game</button>
+  <button class="ftag on" id="ftag-waf" style="background:#fff4e6;color:#8b5a00;border-color:#fff4e6" onclick="toggleFilter('waf')">Waffle</button>
+  <button class="ftag-all" onclick="filterAll(true)">All</button>
+  <button class="ftag-all" onclick="filterAll(false)">None</button>
+</div>
 <div class="legend-row">
   <span class="leg cat">Catsium (AI And Data)</span>
   <span class="leg dom">Dom (Applied AI)</span>
@@ -490,12 +508,42 @@ th{background:#f5f5f5;font-weight:500;font-size:11px;color:#555;text-align:cente
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
+const people=['cat','dom','zathral','shad','gam','waf'];
+const activeFilters=new Set(people);
+
 function show(id,el){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('view-'+id).classList.add('active');
   el.classList.add('active');
+  const fb=document.getElementById('filter-bar');
+  id==='all'?fb.classList.add('visible'):fb.classList.remove('visible');
 }
+
+function applyFilters(){
+  people.forEach(p=>{
+    const vis=activeFilters.has(p);
+    document.querySelectorAll('#view-all .bl.'+p).forEach(el=>{
+      el.style.display=vis?'':'none';
+    });
+    const btn=document.getElementById('ftag-'+p);
+    if(btn) vis?btn.classList.add('on'):btn.classList.remove('on');
+  });
+}
+
+function toggleFilter(p){
+  activeFilters.has(p)?activeFilters.delete(p):activeFilters.add(p);
+  applyFilters();
+}
+
+function filterAll(state){
+  state?people.forEach(p=>activeFilters.add(p)):activeFilters.clear();
+  applyFilters();
+}
+// Show filter bar on load since All tab is active by default
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('filter-bar').classList.add('visible');
+});
 function setStatus(msg,t){const s=document.getElementById('status');s.textContent=msg;if(t)setTimeout(()=>s.textContent='',t);}
 function exportPNG(){
   setStatus('Generating...');
