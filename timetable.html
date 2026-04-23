@@ -1,549 +1,504 @@
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a}
-.toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tab{padding:6px 12px;border-radius:8px;border:0.5px solid #ccc;background:#f5f5f5;cursor:pointer;font-size:12px;font-weight:500;color:#555}
-.tab.active{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
-.exports{display:flex;gap:6px;align-items:center}
-.btn{padding:6px 12px;border-radius:8px;border:0.5px solid #ccc;background:#fff;cursor:pointer;font-size:12px;font-weight:500;color:#1a1a1a;display:flex;align-items:center;gap:4px}
-.btn:hover{background:#f5f5f5}
-.btn svg{width:14px;height:14px;flex-shrink:0}
-.view{display:none}
-.view.active{display:block}
-#capture-area{background:#fff;padding:12px;border-radius:8px;border:0.5px solid #e0e0e0}
-.legend-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.leg{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500}
-table{width:100%;border-collapse:collapse;table-layout:fixed}
-th,td{border:0.5px solid #ddd;padding:5px 7px;vertical-align:top;font-size:11px;word-break:break-word}
-th{background:#f5f5f5;font-weight:500;font-size:11px;color:#555;text-align:center}
-.tc{background:#f9f9f9;font-size:10px;font-weight:500;color:#888;text-align:right;white-space:nowrap;width:52px}
-.bl{border-radius:4px;padding:3px 5px;margin:2px 0;font-size:10px;line-height:1.4;display:block}
-.cat{background:#f7dbe5;color:#10579d}
-.gam{background:#d4e8f0;color:#1e3a5f}
-.dom{background:#d3a2f5;color:#351e04}
-.waf{background:#fff4e6;color:#8b5a00}
-.zathral{background:#90ede2;color:#271818}
-.shad{background:#e8d5b7;color:#5c4a3d}
-.lun{background:#f0f0f0;color:#999;font-style:italic}
-.el{opacity:0.6;font-style:italic}
-.nm{font-weight:600;font-size:9px;display:block;margin-bottom:1px}
-.note{font-size:10px;color:#888;margin-top:8px;padding:6px 8px;background:#f9f9f9;border-radius:6px}
-#status{font-size:11px;color:#888}
-#filter-bar{display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;background:#f9f9f9;border-radius:8px;border:0.5px solid #e0e0e0}
-#filter-bar.visible{display:flex}
-.filter-bar-label{font-size:11px;color:#888;font-weight:500;margin-right:2px}
-.ftag{padding:4px 10px;border-radius:6px;border:1.5px solid transparent;cursor:pointer;font-size:11px;font-weight:600;opacity:0.35;transition:opacity .15s,border-color .15s}
-.ftag.on{opacity:1;border-color:rgba(0,0,0,0.2)}
-.ftag-all{padding:4px 10px;border-radius:6px;border:0.5px solid #ccc;background:#fff;cursor:pointer;font-size:11px;color:#555;margin-left:2px}
-.bl.hidden-person{display:none!important}
-</style>
-<div style="padding:0.5rem 0">
-<div class="toolbar">
-  <div class="tabs">
-    <div class="tab active" onclick="show('all',this)">All</div>
-    <div class="tab" onclick="show('cat',this)">Catsium</div>
-    <div class="tab" onclick="show('dom',this)">Dom</div>
-    <div class="tab" onclick="show('zathral',this)">Zathral</div>
-    <div class="tab" onclick="show('shad',this)">Shadow</div>
-    <div class="tab" onclick="show('gam',this)">Game</div>
-    <div class="tab" onclick="show('waf',this)">Waffle</div>
-  </div>
-  <div class="exports">
-    <button class="btn" onclick="exportPNG()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"/><path d="M2 9l3-3 3 3 2-2 4 3"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/></svg>PNG
-    </button>
-    <button class="btn" onclick="exportCSV()">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h7l3 3v9H3V2z"/><path d="M10 2v3h3"/><path d="M5 9h6M5 11.5h4"/></svg>CSV
-    </button>
-    <span id="status"></span>
-  </div>
-</div>
+<!DOCTYPE html>
+<html>
 
-<div id="capture-area">
-<div id="filter-bar">
-  <span class="filter-bar-label">Show:</span>
-  <button class="ftag on" id="ftag-cat" style="background:#f7dbe5;color:#10579d;border-color:#f7dbe5" onclick="toggleFilter('cat')">Catsium</button>
-  <button class="ftag on" id="ftag-dom" style="background:#d3a2f5;color:#351e04;border-color:#d3a2f5" onclick="toggleFilter('dom')">Dom</button>
-  <button class="ftag on" id="ftag-zathral" style="background:#90ede2;color:#271818;border-color:#90ede2" onclick="toggleFilter('zathral')">Zathral</button>
-  <button class="ftag on" id="ftag-shad" style="background:#e8d5b7;color:#5c4a3d;border-color:#e8d5b7" onclick="toggleFilter('shad')">Shadow</button>
-  <button class="ftag on" id="ftag-gam" style="background:#d4e8f0;color:#1e3a5f;border-color:#d4e8f0" onclick="toggleFilter('gam')">Game</button>
-  <button class="ftag on" id="ftag-waf" style="background:#fff4e6;color:#8b5a00;border-color:#fff4e6" onclick="toggleFilter('waf')">Waffle</button>
-  <button class="ftag-all" onclick="filterAll(true)">All</button>
-  <button class="ftag-all" onclick="filterAll(false)">None</button>
-</div>
-<div class="legend-row">
-  <span class="leg cat">Catsium (AI And Data)</span>
-  <span class="leg dom">Dom (Applied AI)</span>
-  <span class="leg zathral">Zathral (AI And Data)</span>
-  <span class="leg shad">Shadow (Digital Product)</span>
-  <span class="leg gam">Game (IT)</span>
-  <span class="leg waf">Waffle (Business)</span>
-</div>
+<!-- start head (not visible to users) -->
+<head>
 
-<!-- ALL VIEW -->
-<div class="view active" id="view-all">
-<div style="overflow-x:auto"><table>
-<thead><tr><th class="tc">Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
-<tbody>
-<tr><td class="tc">08:00</td>
-  <td></td><td><span class="bl gam el"><span class="nm">Game · NETWKT</span>Network Technology · ELEARNING SIT</span></td><td></td><td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · Lecture</span></td>
-  <td><span class="bl waf el"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · ELEARNING SBM</span><span class="bl zathral"><span class="nm">Zathral · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span></td></tr>
-<tr><td class="tc">09:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.522 SEG</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span><span class="bl waf"><span class="nm">Waffle · FG105F</span>Front-End Design · S.336 SEG</span></td>
-  <td><span class="bl shad el"><span class="nm">Shadow · ADA</span>Advanced Data Analysis (E-Learning)</span><span class="bl waf"><span class="nm">Waffle · PDL</span>Professional Development · S.336 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-08-29</span><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl cat el"><span class="nm">Catsium · DPV</span>Data Prep & Visualization (E-Learning)</span><span class="bl zathral"><span class="nm">Zathral · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span><span class="bl shad el"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals (E-Learning)</span><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">10:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span><span class="bl zathral el"><span class="nm">Zathral · COMT</span>Data Processing and Visualisation (E-Learning)</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span><span class="bl waf"><span class="nm">Waffle · FG105F</span>Front-End Design · S.336 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · PEM</span>Homeroom · S.310 SEG</span><span class="bl shad el"><span class="nm">Shadow · UDWD</span>User Design & Web Dev (E-Learning)</span><span class="bl waf"><span class="nm">Waffle · PDL</span>Professional Development · S.336 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-08-29</span><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DSM</span>Data Security & Management · S.342 SEG</span><span class="bl shad el"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals (E-Learning)</span><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">11:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability & Climate Action · 03-06-50</span><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-06-55</span><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span><span class="bl zathral"><span class="nm">Zathral · PEM</span>Homeroom · S.306 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span><span class="bl zathral"><span class="nm">Zathral · CCD</span>Cloud Computing Development · P.507</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DSM</span>Data Security & Management · S.342 SEG</span><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">12:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability & Climate Action · 03-06-50</span><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-06-55</span><span class="bl zathral"><span class="nm">Zathral · DEP</span>Data Engineering Project · S.130A</span><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl lun"><span class="nm">Game</span>🍽 Lunch</span><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span><span class="bl zathral"><span class="nm">Zathral · CCD</span>Cloud Computing Development · P.507</span><span class="bl shad"><span class="nm">Shadow · UDWD</span>User Design & Web Dev · S.539 SEG</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span><span class="bl lun"><span class="nm">Dom</span>🍽 Lunch</span><span class="bl lun"><span class="nm">Game</span>🍽 Lunch</span><span class="bl zathral"><span class="nm">Zathral · DEP</span>Data Engineering Project · S.130A</span><span class="bl lun"><span class="nm">Shadow</span>🍽 Lunch</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span><span class="bl lun"><span class="nm">Shadow</span>🍽 Lunch</span><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · UDWD</span>User Design & Web Dev · S.539 SEG</span><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td><span class="bl gam el"><span class="nm">Game · BIE</span>Biomedical Information Engineering (E-Learning)</span></td></tr>
-<tr><td class="tc">14:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch (cont)</span><span class="bl dom"><span class="nm">Dom · Homeroom</span>Homeroom</span><span class="bl gam"><span class="nm">Game · PEM</span>Professional Ethics & Mindset · L.530 SIT</span><span class="bl zathral"><span class="nm">Zathral · MAPDEV</span>MAPDEV · L.635</span><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.476 SEG</span><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security & Management · S.342 SEG</span><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span><span class="bl shad"><span class="nm">Shadow · ADA</span>Advanced Data Analysis · S.521 SEG</span><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control System Dev · R.412 SEG</span><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.476 SEG</span><span class="bl gam el"><span class="nm">Game · UXDWD</span>UX Design & Web Dev (E-Learning)</span></td></tr>
-<tr><td class="tc">15:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span><span class="bl waf"><span class="nm">Waffle · EG110F</span>Engineering Leadership · P.504 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · EVOGMS</span>Evolution of Games · M.414 SDM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span><span class="bl gam"><span class="nm">Game · PCS1</span>Professional Core Skills · L.530 SIT</span><span class="bl zathral"><span class="nm">Zathral · GSEFX</span>GSEFX · N1.507 SDM</span><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.476 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security & Management · S.342 SEG</span><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span><span class="bl shad"><span class="nm">Shadow · ADA</span>Advanced Data Analysis · S.521 SEG</span><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td><span class="bl gam el"><span class="nm">Game · PROG</span>Programming (E-Learning)</span></td></tr>
-<tr><td class="tc">16:00</td>
-  <td><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · GS-UCL</span>Understanding Contracts & The Law · LTD-5 SBM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span><span class="bl gam"><span class="nm">Game · AMATHC</span>Applied Mathematics & Critical Thinking · L.502 SIT</span><span class="bl zathral"><span class="nm">Zathral · EVOGMS</span>Evolution of Games · M.414 SDM</span><span class="bl shad"><span class="nm">Shadow · PCS1</span>Professional Core Skills · S.476 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · 03-07-50</span><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span><span class="bl shad"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals · S.521 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td><span class="bl cat"><span class="nm">Catsium · ARTSAP</span>Visual Arts Appreciation · N1.813 SDM</span><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span><span class="bl shad"><span class="nm">Shadow · PEM</span>Professional Ethics & Mindset · S.476 SEG</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · 03-07-50</span><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span><span class="bl shad"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals · S.521 SEG</span></td>
-  <td></td>
-  <td></td></tr>
-<tr><td class="tc">18:00</td>
-  <td></td><td></td>
-  <td><span class="bl dom el"><span class="nm">Dom · SCA</span>Sustainability & Climate Action (E-Learning)</span></td>
-  <td><span class="bl dom el"><span class="nm">Dom · EPL</span>Effective Personal Leadership (E-Learning)</span></td>
-  <td></td></tr>
-</tbody></table></div>
-<p class="note">Italic/faded = e-learning or online. All timetables merged from individual schedules.</p>
-</div>
+<!-- json info goes here -->
+    <script>
+        const data = {
+            "users" : {
+                "Catsium" : {
+                    "colour" : "#10579D",
+                    "background_colour" : "#F7DBE5",
+                    "code" : "AI And Data",
+                    "timetable" : [
+                        {day: 1, start: '9.00', end: '11.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'S.310 SEG'},
+                        {day: 1, start: '11.00', end: '13.00', code_name: 'CCD', name: 'Cloud Computing Development', classroom: 'S.310 SEG'},
+                        {day: 1, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 1, start: '14.00', end: '16.00', code_name: 'DEP', name: 'Data Engineering Project', classroom: 'S.130A SEG'},
+                        {day: 2, start: '10.00', end: '13.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'S.310 SEG'},
+                        {day: 2, start: '13.00', end: '15.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '15.00', end: '16.00', code_name: 'EVOGMS', name: 'Evolution of Games', classroom: 'M.414 SDM'},
+                        {day: 2, start: '16.00', end: '17.00', code_name: 'GS-UCL', name: 'Understanding Contracts & The Law', classroom: 'LTD-5 SBM'},
+                        {day: 2, start: '17.00', end: '18.00', code_name: 'ARTSAP', name: 'Visual Arts Appreciation', classroom: 'N1.813 SDM'},
+                        {day: 3, start: '10.00', end: '11.00', code_name: 'PEM (Even)', name: 'Homeroom', classroom: 'S.310 SEG'},
+                        {day: 3, start: '11.00', end: '13.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'S.310 SEG'},
+                        {day: 3, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 3, start: '14.00', end: '16.00', code_name: 'DSM', name: 'Data Security & Management', classroom: 'S.342 SEG'},
+                        {day: 4, start: '13.00', end: '15.00', code_name: 'ICSD', name: 'Intelligent Control System Dev', classroom: 'R.412 SEG'},
+                        {day: 4, start: '15.00', end: '17.00', code_name: 'SDCA', name: 'Sensor Data Collection & Analysis', classroom: 'S.373 SEG'},
+                        {day: 5, start: '9.00', end: '10.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'E-Learning', online: true}
+                    ]
+                }, 
 
-<!-- CATSIUM -->
-<div class="view" id="view-cat">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">09:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
-  <td></td><td></td><td></td>
-  <td><span class="bl cat el"><span class="nm">Catsium · DPV</span>Data Prep & Visualization (E-Learning)</span></td></tr>
-<tr><td class="tc">10:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · PEM</span>Homeroom · S.310 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">11:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">12:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · CCD</span>Cloud Computing Development · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DPV</span>Data Prep & Visualization · S.310 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · AML</span>Applied Machine Learning · S.310 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control System Dev · R.412 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">14:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
-  <td><span class="bl lun"><span class="nm">Catsium</span>🍽 Lunch (cont)</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security & Management · S.342 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · ICSD</span>Intelligent Control System Dev · R.412 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">15:00</td>
-  <td><span class="bl cat"><span class="nm">Catsium · DEP</span>Data Engineering Project · S.130A SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · EVOGMS</span>Evolution of Games · M.414 SDM</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · DSM</span>Data Security & Management · S.342 SEG</span></td>
-  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">16:00</td>
-  <td></td>
-  <td><span class="bl cat"><span class="nm">Catsium · GS-UCL</span>Understanding Contracts & The Law · LTD-5 SBM</span></td>
-  <td></td>
-  <td><span class="bl cat"><span class="nm">Catsium · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td><span class="bl cat"><span class="nm">Catsium · ARTSAP</span>Visual Arts Appreciation · N1.813 SDM</span></td>
-  <td></td><td></td><td></td></tr>
-</tbody></table>
-<p class="note">AML meets twice: MON 09–12 and WED 11–13. Multiple DPV sessions across the week.</p>
-</div>
+                "Dom" : {
+                    "colour" : "#351E04",
+                    "background_colour" : "#D3A2F5",
+                    "code" : "Applied AI",
+                    "timetable" : [
+                        {day: 1, start: '9.00', end: '11.00', code_name: 'COMT', name: 'Computational Thinking', classroom: '03-06-50'},
+                        {day: 1, start: '11.00', end: '13.00', code_name: 'SCA', name: 'Sustainability & Climate Action', classroom: '03-06-50'},
+                        {day: 2, start: '9.00', end: '11.00', code_name: 'COMT', name: 'Computational Thinking', classroom: '03-06-55'},
+                        {day: 2, start: '11.00', end: '13.00', code_name: 'DAVA', name: 'Data Analytics & Visualization', classroom: '03-06-55'},
+                        {day: 2, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '14.00', end: '15.00', code_name: 'Homeroom', name: 'Homeroom', classroom: ''},
+                        {day: 2, start: '15.00', end: '18.00', code_name: 'UXID', name: 'UX & Interface Design', classroom: '03-08-29/1'},
+                        {day: 3, start: '14.00', end: '16.00', code_name: 'CYFUN', name: 'Cybersecurity Fundamentals', classroom: '03-07-50'},
+                        {day: 3, start: '16.00', end: '18.00', code_name: 'LOMA', name: 'Logic & Mathematics', classroom: '03-07-50'},
+                        {day: 3, start: '18.00', end: '19.00', code_name: 'SCA', name: 'Sustainability & Climate Action', classroom: 'E-Learning', online: true},
+                        {day: 4, start: '8.00', end: '9.00', code_name: 'LOMA', name: 'Logic & Mathematics', classroom: 'Lecture'},
+                        {day: 4, start: '9.00', end: '11.00', code_name: 'DAVA', name: 'Data Analytics & Visualization', classroom: '03-08-29'},
+                        {day: 4, start: '11.00', end: '13.00', code_name: 'EPL', name: 'Effective Personal Leadership', classroom: '03-08-29'},
+                        {day: 4, start: '18.00', end: '19.00', code_name: 'EPL', name: 'Effective Personal Leadership', classroom: 'E-Learning', online: true}
+                    ]   
+                },
 
-<!-- DOM -->
-<div class="view" id="view-dom">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">08:00</td>
-  <td></td><td></td><td></td>
-  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · Lecture</span></td>
-  <td></td></tr>
-<tr><td class="tc">09:00</td>
-  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span></td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-08-29</span></td>
-  <td></td></tr>
-<tr><td class="tc">10:00</td>
-  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-50</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · COMT</span>Computational Thinking · 03-06-55</span></td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-08-29</span></td>
-  <td></td></tr>
-<tr><td class="tc">11:00</td>
-  <td><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability & Climate Action · 03-06-50</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-06-55</span></td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span></td>
-  <td></td></tr>
-<tr><td class="tc">12:00</td>
-  <td><span class="bl dom"><span class="nm">Dom · SCA</span>Sustainability & Climate Action · 03-06-50</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · DAVA</span>Data Analytics & Visualization · 03-06-55</span></td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · EPL</span>Effective Personal Leadership · 03-08-29</span></td>
-  <td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td></td>
-  <td><span class="bl lun"><span class="nm">Dom</span>🍽 Lunch</span></td>
-  <td></td><td></td><td></td></tr>
-<tr><td class="tc">14:00</td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · PCHour</span>Pastoral Care Hour · N/A</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">15:00</td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · CYFUN</span>Cybersecurity Fundamentals · 03-07-50</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">16:00</td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · 03-07-50</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td><span class="bl dom"><span class="nm">Dom · UXID</span>UX & Interface Design · 03-08-29/1</span></td>
-  <td><span class="bl dom"><span class="nm">Dom · LOMA</span>Logic & Mathematics · 03-07-50</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">18:00</td>
-  <td></td><td></td>
-  <td><span class="bl dom el"><span class="nm">Dom · SCA</span>Sustainability & Climate Action (E-Learning)</span></td>
-  <td><span class="bl dom el"><span class="nm">Dom · EPL</span>Effective Personal Leadership (E-Learning)</span></td>
-  <td></td></tr>
-</tbody></table>
-<p class="note">COMT: 09–11. DAVA/EPL/SCA/LOMA span multiple hours. CYFUN: 14–16 Wed. UXID: 15–18 Tue. Lunch: Tue 13:00.</p>
-</div>
+                "Zathral" : {
+                    "colour" : "#271818",
+                    "background_colour" : "#90EDE2",
+                    "code" : "AI And Data",
+                    "timetable" : [
+                        {day: 1, start: '10.00', end: '11.00', code_name: 'COMT', name: 'Data Processing and Visualisation', classroom: 'E-Learning', online: true},
+                        {day: 2, start: '9.00', end: '11.00', code_name: 'ICSD', name: 'Intelligent Control Sys Dev', classroom: 'R.412 SEG'},
+                        {day: 2, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '12.00', end: '14.00', code_name: 'DEP', name: 'Data Engineering Project', classroom: 'S.130A SEG'},
+                        {day: 2, start: '14.00', end: '15.00', code_name: 'MAPDEV', name: 'Mobile Application Development', classroom: 'L.635 SIT'},
+                        {day: 2, start: '15.00', end: '16.00', code_name: 'GSEFX', name: 'Green Screen Effects', classroom: 'N1.507 SDM'},
+                        {day: 2, start: '16.00', end: '17.00', code_name: 'EVOGMS', name: 'Evolution of Games', classroom: 'M.414 SDM'},
+                        {day: 3, start: '11.00', end: '12.00', code_name: 'PEM (Even)', name: 'Homeroom', classroom: 'S.306 SEG'},
+                        {day: 3, start: '12.00', end: '13.00', name: '🍽 Lunch', break: true},
+                        {day: 3, start: '13.00', end: '15.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'P.507 SEG'}, 
+                        {day: 3, start: '15.00', end: '18.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'P.507 SEG'}, 
+                        {day: 4, start: '11.00', end: '13.00', code_name: 'CCD', name: 'Cloud Computing Development', classroom: 'P.507'},
+                        {day: 4, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 4, start: '14.00', end: '16.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'P.507 SEG'}, 
+                        
+                        
+                        
+                        {day: 5, start: '8.00', end: '10.00', code_name: 'SDCA', name: 'Sensor Data Collection & Analysis', classroom: 'S.373 SEG'},
+                        {day: 5, start: '10.00', end: '12.00', code_name: 'DSM', name: 'Data Security & Management', classroom: 'S.342 SEG'} 
+                    ]
+                },
 
-<!-- ZATHRAL -->
-<div class="view" id="view-zathral">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">08:00</td>
-  <td></td><td></td><td></td><td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · SDCA</span>Sensor Data Collection & Analysis · S.373 SEG</span></td></tr>
-<tr><td class="tc">09:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
-  <td></td><td></td><td></td></tr>
-<tr><td class="tc">10:00</td>
-  <td><span class="bl zathral el"><span class="nm">Zathral · COMT</span>Data Processing and Visualisation (E-Learning)</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · ICSD</span>Intelligent Control Sys Dev · R.412 SEG</span></td>
-  <td></td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DSM</span>Data Security & Management · S.342 SEG</span></td></tr>
-<tr><td class="tc">11:00</td>
-  <td></td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · PEM</span>Homeroom · S.306 SEG</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · CCD</span>Cloud Computing Development · P.507</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DSM</span>Data Security & Management · S.342 SEG</span></td></tr>
-<tr><td class="tc">12:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DEP</span>Data Engineering Project · S.130A</span></td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · CCD</span>Cloud Computing Development · P.507</span></td>
-  <td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DEP</span>Data Engineering Project · S.130A</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">14:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · MAPDEV</span>MAPDEV · L.635</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td></td></tr>
-<tr><td class="tc">15:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · GSEFX</span>GSEFX · N1.507 SDM</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · AML</span>Applied Machine Learning · P.507</span></td>
-  <td></td></tr>
-<tr><td class="tc">16:00</td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · EVOGMS</span>Evolution of Games · M.414 SDM</span></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td></td>
-  <td><span class="bl zathral"><span class="nm">Zathral · DPV</span>Data Prep & Visualization · P.507 SEG</span></td>
-  <td></td><td></td></tr>
-</tbody></table>
-<p class="note">Zathral. Mon: COMT 10–11 (e-learn). Tue: ICSD 09–11, DEP 12–14, MAPDEV 14–15, GSEFX 15–16, EVOGMS 16–17. Wed: PEM 11–12, AML 13–15, DPV 15–17. Thu: CCD 11–13, AML 14–16. Fri: SDCA 08–09, DSM 10–12.</p>
-</div>
+                "Shadow" : {
+                    "colour" : "#5c4a3d",
+                    "background_colour" : "#e8d5b7",
+                    "code" : "Digital Product",
+                    "timetable" : [
+                        {day: 1, start: '9.00', end: '11.00', code_name: 'AM', name: 'Applied Mechanics', classroom: 'S.522 SEG'},
+                        {day: 1, start: '11.00', end: '13.00', code_name: 'PROG', name: 'Programming', classroom: 'S.558 SEG'},
+                        {day: 2, start: '11.00', end: '13.00', code_name: 'PROG', name: 'Programming', classroom: 'S.558 SEG'},
+                        {day: 2, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '14.00', end: '16.00', code_name: 'AM', name: 'Applied Mechanics', classroom: 'S.476 SEG'},
+                        {day: 2, start: '16.00', end: '17.00', code_name: 'PCS1', name: 'Professional Core Skills', classroom: 'S.476 SEG'},
+                        {day: 2, start: '17.00', end: '18.00', code_name: 'PEM (Odd)', name: 'Professional Ethics & Mindset', classroom: 'S.476 SEG'},
+                        {day: 3, start: '9.00', end: '11.00', code_name: 'ADA', name: 'Advanced Data Analysis', classroom: 'E-Learning', online: true},
+                        {day: 3, start: '14.00', end: '16.00', code_name: 'ADA', name: 'Advanced Data Analysis', classroom: 'S.521 SEG'},
+                        {day: 3, start: '16.00', end: '18.00', code_name: 'ABFC', name: 'Abstract Fundamentals', classroom: 'S.521 SEG'},
+                        {day: 4, start: '12.00', end: '15.00', code_name: 'UDWD', name: 'User Design & Web Dev', classroom: 'S.539 SEG'},
+                        {day: 5, start: '9.00', end: '11.00', code_name: 'ABFC', name: 'Abstract Fundamentals', classroom: 'E-Learning', online: true}
+                    ]
+                },
 
-<!-- SHADOW -->
-<div class="view" id="view-shad">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">09:00</td>
-  <td><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.522 SEG</span></td>
-  <td></td><td><span class="bl shad el"><span class="nm">Shadow · ADA</span>Advanced Data Analysis (E-Learning)</span></td>
-  <td></td>
-  <td><span class="bl shad el"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals (E-Learning)</span></td></tr>
-<tr><td class="tc">10:00</td>
-  <td></td>
-  <td></td><td><span class="bl shad el"><span class="nm">Shadow · UDWD</span>User Design & Web Dev (E-Learning)</span></td>
-  <td></td>
-  <td><span class="bl shad el"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals (E-Learning)</span></td></tr>
-<tr><td class="tc">11:00</td>
-  <td><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span></td>
-  <td></td>
-  <td></td>
-  <td></td></tr>
-<tr><td class="tc">12:00</td>
-  <td><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · PROG</span>Programming · S.558 SEG</span></td>
-  <td></td>
-  <td><span class="bl shad"><span class="nm">Shadow · UDWD</span>User Design & Web Dev · S.539 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td></td>
-  <td><span class="bl lun"><span class="nm">Shadow</span>🍽 Lunch</span></td>
-  <td><span class="bl lun"><span class="nm">Shadow</span>🍽 Lunch</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · UDWD</span>User Design & Web Dev · S.539 SEG</span></td><td></td></tr>
-<tr><td class="tc">14:00</td>
-  <td></td>
-  <td><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.476 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · ADA</span>Advanced Data Analysis · S.521 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · UDWD</span>User Design & Web Dev · S.539 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">15:00</td>
-  <td></td>
-  <td><span class="bl shad"><span class="nm">Shadow · AM</span>Applied Mechanics · S.476 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · ADA</span>Advanced Data Analysis · S.521 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">16:00</td>
-  <td></td>
-  <td><span class="bl shad"><span class="nm">Shadow · PCS1</span>Professional Core Skills · S.476 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals · S.521 SEG</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td><span class="bl shad"><span class="nm">Shadow · PEM</span>Professional Ethics & Mindset · S.476 SEG</span></td>
-  <td><span class="bl shad"><span class="nm">Shadow · ABFC</span>Abstract Fundamentals · S.521 SEG</span></td>
-  <td></td><td></td></tr>
-</tbody></table>
-<p class="note">Shadow (ONG HAO LIN) - Course EGDFP2. Mon: AM 09–10, PROG 11–13. Tue: PROG 11–13, AM 14–16, PCS1 16–17, PEM 17–18. Wed: ADA 09–10 (e-learn), UDWD 10–11 (e-learn), ADA 14–16, ABFC 16–18. Thu: UDWD 12–15. Fri: ABFC 09–11 (e-learn). Lunch: Tue 13:00, Wed 13:00.</p>
-</div>
+                "Game" : {
+                    "colour" : "#1e3a5f",
+                    "background_colour" : "#d4e8f0",
+                    "code" : "IT",
+                    "timetable" : [
+                        {day: 1, start: '14.00', end: '17.00', code_name: 'BIE', name: 'Biomedical Information Engineering', classroom: 'L.605 SIT'},
+                        {day: 2, start: '8.00', end: '9.00', code_name: 'NETWKT', name: 'Network Technology', classroom: 'E-Learning SIT', online: true},
+                        {day: 2, start: '9.00', end: '12.00', code_name: 'PROG', name: 'Programming', classroom: 'L.637 SIT'},
+                        {day: 2, start: '12.00', end: '14.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '14.00', end: '15.00', code_name: 'PEM', name: 'Professional Ethics & Mindset', classroom: 'L.530 SIT'},
+                        {day: 2, start: '15.00', end: '16.00', code_name: 'PCS1', name: 'Professional Core Skills', classroom: 'L.530 SIT'},
+                        {day: 2, start: '16.00', end: '18.00', code_name: 'AMATHC', name: 'Applied Mathematics & Critical Thinking', classroom: 'L.502 SIT'},
+                        {day: 3, start: '9.00', end: '12.00', code_name: 'NETWKT', name: 'Network Technology', classroom: 'L.606 SIT'},
+                        {day: 3, start: '12.00', end: '13.00', name: '🍽 Lunch', break: true},
+                        {day: 3, start: '13.00', end: '17.00', code_name: 'UXDWD', name: 'UX Design & Web Dev', classroom: 'L.604 SIT'},
+                        {day: 5, start: '13.00', end: '14.00', code_name: 'BIE', name: 'Biomedical Information Engineering', classroom: 'E-Learning', online: true},
+                        {day: 5, start: '14.00', end: '15.00', code_name: 'UXDWD', name: 'UX Design & Web Dev', classroom: 'E-Learning', online: true},
+                        {day: 5, start: '15.00', end: '16.00', code_name: 'PROG', name: 'Programming', classroom: 'E-Learning', online: true}
+                    ]
+                },
 
-<!-- GAME -->
-<div class="view" id="view-gam">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">08:00</td>
-  <td></td>
-  <td><span class="bl gam el"><span class="nm">Game · NETWKT</span>Network Technology · ELEARNING SIT</span></td>
-  <td></td><td></td><td></td></tr>
-<tr><td class="tc">09:00</td>
-  <td></td>
-  <td><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · NETWKT</span>Network Technology · L.606 SIT</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">10:00</td>
-  <td></td>
-  <td><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · NETWKT</span>Network Technology · L.606 SIT</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">11:00</td>
-  <td></td>
-  <td><span class="bl gam"><span class="nm">Game · PROG</span>Programming · L.637 SIT</span></td>
-  <td></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">12:00</td>
-  <td></td><td></td>
-  <td><span class="bl lun"><span class="nm">Game</span>🍽 Lunch</span></td>
-  <td></td><td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td></td>
-  <td><span class="bl lun"><span class="nm">Game</span>🍽 Lunch</span></td>
-  <td><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span></td>
-  <td></td>
-  <td><span class="bl gam el"><span class="nm">Game · BIE</span>Biomedical Information Engineering (E-Learning)</span></td></tr>
-<tr><td class="tc">14:00</td>
-  <td><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · PEM</span>Professional Ethics & Mindset · L.530 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span></td>
-  <td></td>
-  <td><span class="bl gam el"><span class="nm">Game · UXDWD</span>UX Design & Web Dev (E-Learning)</span></td></tr>
-<tr><td class="tc">15:00</td>
-  <td><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · PCS1</span>Professional Core Skills · L.530 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span></td><td></td>
-  <td><span class="bl gam el"><span class="nm">Game · PROG</span>Programming (E-Learning)</span></td></tr>
-<tr><td class="tc">16:00</td>
-  <td><span class="bl gam"><span class="nm">Game · BIE</span>Biomedical Information Engineering · L.605 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · AMATHC</span>Applied Mathematics & Critical Thinking · L.502 SIT</span></td>
-  <td><span class="bl gam"><span class="nm">Game · UXDWD</span>UX Design & Web Dev · L.604 SIT</span></td><td></td><td></td></tr>
-<tr><td class="tc">17:00</td>
-  <td></td>
-  <td></td>
-  <td></td><td></td><td></td></tr>
-<tr><td class="tc">18:00</td>
-  <td></td><td></td>
-  <td></td>
-  <td></td><td></td></tr>
-</tbody></table>
-<p class="note">Game (DANIAL ILHAN BIN SUHAIRY) - Course ITDFPA. Mon: BIE 14–17. Tue: NETWKT 08–09 (e-learn), PROG 09–12, PEM 14–15, PCS1 15–16, AMATHC 16–17. Wed: NETWKT 09–12, UXDWD 13–16. Fri: BIE 13–14 (e-learn), UXDWD 14–15 (e-learn), PROG 15–16 (e-learn). Lunch: Tue 13:00, Wed 12:00.</p>
-</div>
+                "Waffles" : {
+                    "colour" : "#8b5a00",
+                    "background_colour" : "#fff4e6",
+                    "code" : "Business",
+                    "timetable" : [
+                        {day: 1, start: '9.00', end: '11.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
+                        {day: 1, start: '11.00', end: '13.00', name: '🍽 Lunch', break: true},
+                        {day: 1, start: '13.00', end: '15.00', code_name: 'IT110F', name: 'IT Fundamentals', classroom: 'L.631 SIT'},
+                        {day: 1, start: '15.00', end: '17.00', code_name: 'PDL', name: 'Professional Development', classroom: 'P.504 SEG'},
+                        {day: 2, start: '9.00', end: '11.00', code_name: 'FG105F', name: 'Front-End Design', classroom: 'G.221 NYP'},
+                        {day: 2, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
+                        {day: 2, start: '12.00', end: '14.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
+                        {day: 3, start: '9.00', end: '11.00', code_name: 'PDL', name: 'Professional Development', classroom: 'S.336 SEG'},
+                        {day: 3, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
+                        {day: 3, start: '12.00', end: '14.00', code_name: 'FM1', name: 'Financial Management', classroom: 'P.504 SEG'},
+                        {day: 3, start: '14.00', end: '16.00', code_name: 'IT110F', name: 'IT Fundamentals', classroom: 'L.631 SIT'},
+                        {day: 4, start: '9.00', end: '11.00', code_name: 'FM1', name: 'Financial Management', classroom: 'P.504 SEG'},
+                        {day: 4, start: '11.00', end: '13.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
+                        {day: 5, start: '8.00', end: '9.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'E-Learning', online: true},
+                        {day: 5, start: '10.00', end: '12.00', code_name: 'FG104F', name: '', classroom: 'LTQ-10 CILS'}
+                    ]
+                }
 
-<!-- WAFFLE -->
-<div class="view" id="view-waf">
-<table><thead><tr><th class="tc">Time</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr></thead>
-<tbody>
-<tr><td class="tc">08:00</td>
-  <td></td><td></td><td></td><td></td>
-  <td><span class="bl waf el"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · ELEARNING SBM</span></td></tr>
-<tr><td class="tc">09:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FG105F</span>Front-End Design · S.336 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · PDL</span>Professional Development · S.336 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">10:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FG105F</span>Front-End Design · S.336 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · PDL</span>Professional Development · S.336 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">11:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td><td></td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FG104F</span>Front-End Design · LTQ-10 CILS</span></td></tr>
-<tr><td class="tc">12:00</td>
-  <td><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · ELCOM1</span>E-Learning Communication · P.504 SEG</span></td>
-  <td></td></tr>
-<tr><td class="tc">13:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td><span class="bl waf"><span class="nm">Waffle · FM1</span>Financial Management · P.504 SEG</span></td>
-  <td><span class="bl lun"><span class="nm">Waffle</span>🍽 Lunch</span></td>
-  <td></td></tr>
-<tr><td class="tc">14:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td></td>
-  <td><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td>
-  <td></td>
-  <td></td></tr>
-<tr><td class="tc">15:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · EG110F</span>Engineering Leadership · P.504 SEG</span></td>
-  <td></td>
-  <td><span class="bl waf"><span class="nm">Waffle · IT110F</span>IT Fundamentals · L.631 SIT</span></td><td></td><td></td></tr>
-<tr><td class="tc">16:00</td>
-  <td><span class="bl waf"><span class="nm">Waffle · EG110F</span>Engineering Leadership · P.504 SEG</span></td>
-  <td></td><td></td>
-  <td></td>
-  <td></td></tr>
-</tbody></table>
-<p class="note">Waffle (YEO CHUN XIANG) - Course FGFF05. Mon: ELCOM1 09–11, IT110F 13–15, EG110F 15–16. Tue: FG105F 09–11, ELCOM1 12–14. Wed: PDL 09–11, FM1 12–14, IT110F 14–16. Thu: FM1 09–11, ELCOM1 11–13. Fri: ELCOM1 08–09 (e-learn), FG104F 09–12. Lunch: Mon 12:00, Tue 11:00 & 13:00, Thu 13:00.</p>
-</div>
+                
+            }
+        }
+    </script>
 
-</div>
-</div>
+<!-- style info for decoration -->
+    <style>
+
+        /* defaults all to 0 */
+        * {
+            box-sizing: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            color: #1a1a1a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed
+        }
+
+        /* shared for both th and td */
+        th, td {
+            border: 0.5px solid #ddd;
+            padding: 5px 7px;
+            vertical-align: top;
+            font-size: 11px;
+            word-break: break-word
+        }
+
+        /* special for th */
+        th {
+            background: #f5f5f5;
+            font-weight: 500;
+            font-size: 11px;
+            color: #555;
+            text-align: center
+        }
+        
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }    
+
+        .tabs {
+            display: flex;
+            margin-left: 8px;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 0.5px solid #ccc;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #555
+        }
+
+        .tab.active {
+            background: #E6F1FB;
+            color: #0C447C;
+            border-color: #B5D4F4
+        }
+
+        .exports {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 0.5px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 4px
+        }
+
+        .btn:hover {
+            background: #f5f5f5
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0
+        }
+
+        .view {
+            display: none
+        }
+
+        .view.active {
+            display: block
+        }
+
+        #capture-area{background:#fff;padding:12px;border-radius:8px;border:0.5px solid #e0e0e0}
+        .legend-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+        .leg{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500}
+        .tc{background:#f9f9f9;font-size:10px;font-weight:500;color:#888;text-align:right;white-space:nowrap;width:52px}
+        .bl{border-radius:4px;padding:3px 5px;margin:2px 0;font-size:10px;line-height:1.4;display:block}
+        .el{opacity:0.6;font-style:italic}
+        .nm{font-weight:600;font-size:9px;display:block;margin-bottom:1px}
+        .note{font-size:10px;color:#888;margin-top:8px;padding:6px 8px;background:#f9f9f9;border-radius:6px}
+        #status{font-size:11px;color:#888}
+
+
+    </style>
+
+
+</head>
+
+
+<!-- start body (visible to users) -->
+<body>
+    <!-- full body -->
+    <div style = "padding: 0.5rem 0">
+
+        <!-- toolbar at the top -->
+        <div class = "toolbar">
+
+            <!-- display names and all button -->
+            <div class = "tabs", id = "list_names"> </div>
+
+            <!-- export button -->
+            <div class = "exports">
+
+                <!-- png button -->
+                <button class = "btn", onclick="exportPNG()">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"/><path d="M2 9l3-3 3 3 2-2 4 3"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/></svg>PNG
+                </button>
+
+                <span id="status"></span>
+            </div>
+        </div>
+
+        <!-- all items -->
+        <div id="capture-area">
+
+            <!-- legends -->
+            <div class="legend-row", id="list_colour"> </div>
+
+            <!-- timetable -->
+            <div class="view active" id="view-all">
+                <div style="overflow-x:auto"><table>
+                    <thead>
+                        <tr>
+                            <th class="tc">Time</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                        </tr>
+                    </thead>
+
+            <!-- main section -->
+            <tbody id = "timetable"></tbody>
+        </table>
+    </div>
+
+    <p class="note">Italic/faded = e-learning.</p>
+
+    </div>
+    
+
+</body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-const people=['cat','dom','zathral','shad','gam','waf'];
-const activeFilters=new Set(people);
-
-function show(id,el){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('view-'+id).classList.add('active');
-  el.classList.add('active');
-  const fb=document.getElementById('filter-bar');
-  id==='all'?fb.classList.add('visible'):fb.classList.remove('visible');
+// set visibility
+for (let username in data.users) {
+    data.users[username].visibility = true;
 }
 
-function applyFilters(){
-  people.forEach(p=>{
-    const vis=activeFilters.has(p);
-    document.querySelectorAll('#view-all .bl.'+p).forEach(el=>{
-      el.style.display=vis?'':'none';
-    });
-    const btn=document.getElementById('ftag-'+p);
-    if(btn) vis?btn.classList.add('on'):btn.classList.remove('on');
-  });
+// put names inside toolbar
+function updateToolbar() {
+    // all button
+    let name_html = `<div class = "tab active" onclick = updateButton(this) >All</div>`;
+
+    // rest of users
+    for (let username in data.users) {
+        name_html += `<div class = "tab active" onclick = updateButton(this)> ${username} </div>`;
+    };
+    document.getElementById("list_names").innerHTML = name_html;
 }
 
-function toggleFilter(p){
-  activeFilters.has(p)?activeFilters.delete(p):activeFilters.add(p);
-  applyFilters();
+// colour coding
+function updateColour() {
+    let legend_html = ` `
+    for (let username in data.users) {
+        const user = data.users[username]
+        if (data.users[username].visibility == true) {
+            legend_html += `<span class = "leg" style = "background: ${user.background_colour}; color: ${user.colour}">${username} (${user.code})</span>`;
+        }
+    };
+    document.getElementById("list_colour").innerHTML = legend_html;
 }
 
-function filterAll(state){
-  state?people.forEach(p=>activeFilters.add(p)):activeFilters.clear();
-  applyFilters();
+// display timetable
+function updateTimetable() {
+    let timetable_html = ` `
+    let start = 0
+    let end = 0
+    for (let username in data.users) {
+        const user = data.users[username]
+        for (let day_index in data.users[username]["timetable"]) {
+            const day = data.users[username]["timetable"][day_index]
+            if ((start == 0 || start > parseInt(day.start, 10)) && data.users[username].visibility == true) {
+                start = parseInt(day.start, 10)
+            }
+            if ((end == 0 || end < parseInt(day.end, 10)) && data.users[username].visibility == true) {
+                end = parseInt(day.end, 10)
+            }
+        }
+    }
+
+    // for loop for hours
+    for (let i = start; i < end; i++) {
+        timetable_html += `<tr> <td class="tc">${i}:00</td> `
+
+        // for loop for days
+        for (let j = 1; j <= 5; j++) {
+
+
+            timetable_html += `<td>`
+            lunch_html = ``
+
+            // for loop for users
+            for (let username in data.users) {
+                const user = data.users[username] 
+
+                // check each lesson a user has
+                for (let day_index in data.users[username]["timetable"]) {
+                    const day = data.users[username]["timetable"][day_index]
+
+                    // check if lesson merges with hour and day
+                    if (parseInt(day.start, 10) <= i && parseInt(day.end, 10) > i && day.day == j && data.users[username].visibility == true) {
+                        
+                        // lunch
+                        if (day.break == true) {
+
+                            // add commas between names
+                            if (lunch_html != ``) {
+                                lunch_html += `, `
+                            }
+
+                            lunch_html += ` ${username}`
+                        
+                        // e learning
+                        } else if (day.online == true) {
+                            timetable_html += `<span class="bl el" style = "background: ${user.background_colour}; color: ${user.colour}"><span class="nm">${username} · ${day.code_name}</span>${day.name} (${day.classroom})</span>`
+                        
+                        // regular
+                        } else {
+                            timetable_html += `<span class="bl" style = "background: ${user.background_colour}; color: ${user.colour}"><span class="nm">${username} · ${day.code_name}</span>${day.name} · ${day.classroom}</span>`
+                        }
+                    }
+                }
+            }
+
+            // check if lunch is there
+            if (lunch_html != ``) {
+                timetable_html += `<span class="bl" style = "background: #F0F0F0; color: #999"><span class="nm">`
+                lunch_html += `</span>🍽 Lunch</span>`
+                timetable_html += lunch_html
+            }
+            timetable_html += `</td>`
+        }
+        timetable_html += `</tr>`
+    }
+    document.getElementById("timetable").innerHTML = timetable_html;
 }
-// Show filter bar on load since All tab is active by default
-document.addEventListener('DOMContentLoaded',function(){
-  document.getElementById('filter-bar').classList.add('visible');
-});
+
+// display certain users
+function updateButton(button) {
+    let username = button.textContent.trim()
+    if (username == "All") {
+        if (button.classList.contains('active')) {
+            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+            for (let userdata in data.users) {
+                data.users[userdata].visibility = false;
+            }
+                
+        } else {
+            document.querySelectorAll('.tab').forEach(t=>t.classList.add('active'));
+            for (let userdata in data.users) {
+                data.users[userdata].visibility = true;
+            }
+
+        }
+    } else {
+        const all_usernames = document.querySelectorAll('#list_names .tab');
+        const all_button = Array.from(all_usernames).find(btn => btn.textContent.trim() === 'All');
+
+        
+        if (button.classList.contains('active')) {
+            button.classList.remove('active');
+            all_button.classList.remove('active');
+            for (let userdata in data.users) {
+                if (username == userdata) {
+                    data.users[userdata].visibility = false;
+                }
+            }
+
+        
+        } else {
+            button.classList.add('active');
+            let check = true
+            for (let userdata in data.users) {
+                if (username == userdata) {
+                    data.users[userdata].visibility = true;
+                }
+
+                // checks if all users are enabled
+                if (data.users[userdata].visibility == false) {
+                    check = false
+                }
+            }
+
+            // change all button to true
+            if (check == true) {
+                all_button.classList.add('active');
+            }
+            
+        }
+    }  
+    updateColour()
+    updateTimetable()
+
+}
+
+// export png
 function setStatus(msg,t){const s=document.getElementById('status');s.textContent=msg;if(t)setTimeout(()=>s.textContent='',t);}
 function exportPNG(){
   setStatus('Generating...');
@@ -552,14 +507,17 @@ function exportPNG(){
     setStatus('Downloaded!',2500);
   }).catch(()=>setStatus('Error, try again',2500));
 }
-const csvData=[
-  ['Person','Day','Time','Code','Module','Room']
-];
-function exportCSV(){
-  const csv=csvData.map(r=>r.map(c=>'"'+c+'"').join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='group_schedule.csv';a.click();
-  setStatus('Downloaded!',2500);
-}
+
+
+// run all functions
+updateToolbar()
+updateColour()
+updateTimetable()
 </script>
+
+
+
+
+
+
+</html>
