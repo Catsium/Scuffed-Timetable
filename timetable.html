@@ -1,523 +1,2183 @@
 <!DOCTYPE html>
-<html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta property="og:title" content="Scuffed Timetable">
+  <meta property="og:description" content="A timetable for scuffed to check timetables and stuff, mostly just made for fun">
+  <meta property="og:image" content="https://github.com/user-attachments/assets/eddc2b91-cacb-4054-8d6c-289557e1d15e">
+  <meta property="og:url" content="https://catsium.page.gd/">
+  <meta property="og:type" content="website">
 
-<!-- start head (not visible to users) -->
-<head>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 13px; color: #1a1a1a; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed }
+    th, td { border: 0.5px solid #ddd; padding: 5px 7px; vertical-align: top; font-size: 11px; word-break: break-word }
+    th { background: #f5f5f5; font-weight: 500; font-size: 11px; color: #555; text-align: center }
 
-<!-- json info goes here -->
-    <script>
-        const data = {
-            "users" : {
-                "Catsium" : {
-                    "colour" : "#10579D",
-                    "background_colour" : "#F7DBE5",
-                    "code" : "AI And Data",
-                    "timetable" : [
-                        {day: 1, start: '9.00', end: '11.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'S.310 SEG'},
-                        {day: 1, start: '11.00', end: '13.00', code_name: 'CCD', name: 'Cloud Computing Development', classroom: 'S.310 SEG'},
-                        {day: 1, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 1, start: '14.00', end: '16.00', code_name: 'DEP', name: 'Data Engineering Project', classroom: 'S.130A SEG'},
-                        {day: 2, start: '10.00', end: '13.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'S.310 SEG'},
-                        {day: 2, start: '13.00', end: '15.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '15.00', end: '16.00', code_name: 'EVOGMS', name: 'Evolution of Games', classroom: 'M.414 SDM'},
-                        {day: 2, start: '16.00', end: '17.00', code_name: 'GS-UCL', name: 'Understanding Contracts & The Law', classroom: 'LTD-5 SBM'},
-                        {day: 2, start: '17.00', end: '18.00', code_name: 'ARTSAP', name: 'Visual Arts Appreciation', classroom: 'N1.813 SDM'},
-                        {day: 3, start: '10.00', end: '11.00', code_name: 'PEM (Even)', name: 'Homeroom', classroom: 'S.310 SEG'},
-                        {day: 3, start: '11.00', end: '13.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'S.310 SEG'},
-                        {day: 3, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 3, start: '14.00', end: '16.00', code_name: 'DSM', name: 'Data Security & Management', classroom: 'S.342 SEG'},
-                        {day: 4, start: '13.00', end: '15.00', code_name: 'ICSD', name: 'Intelligent Control System Dev', classroom: 'R.412 SEG'},
-                        {day: 4, start: '15.00', end: '17.00', code_name: 'SDCA', name: 'Sensor Data Collection & Analysis', classroom: 'S.373 SEG'},
-                        {day: 5, start: '9.00', end: '10.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'E-Learning', online: true}
-                    ]
-                }, 
+    .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .tabs { display: flex; margin-left: 8px; gap: 6px; flex-wrap: wrap }
+    .tab { padding: 6px 12px; border-radius: 8px; border: 0.5px solid #ccc; background: #f5f5f5; cursor: pointer; font-size: 12px; font-weight: 500; color: #555 }
+    .tab.active { background: #E6F1FB; color: #0C447C; border-color: #B5D4F4 }
+    .exports { display: flex; gap: 6px; align-items: center; flex-wrap: wrap }
+    .btn { padding: 6px 12px; border-radius: 8px; border: 0.5px solid #ccc; background: #fff; cursor: pointer; font-size: 12px; font-weight: 500; color: #1a1a1a; display: flex; align-items: center; gap: 4px }
+    .btn:hover { background: #f5f5f5 }
+    .btn svg { width: 14px; height: 14px; flex-shrink: 0 }
+    .btn-add { background: #E6F1FB; border-color: #B5D4F4; color: #0C447C; }
+    .btn-add:hover { background: #d5e9fa; }
+    .view { display: none }
+    .view.active { display: block }
 
-                "Dom" : {
-                    "colour" : "#351E04",
-                    "background_colour" : "#D3A2F5",
-                    "code" : "Applied AI",
-                    "timetable" : [
-                        {day: 1, start: '9.00', end: '11.00', code_name: 'COMT', name: 'Computational Thinking', classroom: '03-06-50'},
-                        {day: 1, start: '11.00', end: '13.00', code_name: 'SCA', name: 'Sustainability & Climate Action', classroom: '03-06-50'},
-                        {day: 2, start: '9.00', end: '11.00', code_name: 'COMT', name: 'Computational Thinking', classroom: '03-06-55'},
-                        {day: 2, start: '11.00', end: '13.00', code_name: 'DAVA', name: 'Data Analytics & Visualization', classroom: '03-06-55'},
-                        {day: 2, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '14.00', end: '15.00', code_name: 'Homeroom', name: 'Homeroom', classroom: ''},
-                        {day: 2, start: '15.00', end: '18.00', code_name: 'UXID', name: 'UX & Interface Design', classroom: '03-08-29/1'},
-                        {day: 3, start: '14.00', end: '16.00', code_name: 'CYFUN', name: 'Cybersecurity Fundamentals', classroom: '03-07-50'},
-                        {day: 3, start: '16.00', end: '18.00', code_name: 'LOMA', name: 'Logic & Mathematics', classroom: '03-07-50'},
-                        {day: 3, start: '18.00', end: '19.00', code_name: 'SCA', name: 'Sustainability & Climate Action', classroom: 'E-Learning', online: true},
-                        {day: 4, start: '8.00', end: '9.00', code_name: 'LOMA', name: 'Logic & Mathematics', classroom: 'Lecture'},
-                        {day: 4, start: '9.00', end: '11.00', code_name: 'DAVA', name: 'Data Analytics & Visualization', classroom: '03-08-29'},
-                        {day: 4, start: '11.00', end: '13.00', code_name: 'EPL', name: 'Effective Personal Leadership', classroom: '03-08-29'},
-                        {day: 4, start: '18.00', end: '19.00', code_name: 'EPL', name: 'Effective Personal Leadership', classroom: 'E-Learning', online: true}
-                    ]   
-                },
+    #capture-area { background:#fff; padding:12px; border-radius:8px; border:0.5px solid #e0e0e0 }
+    .legend-row { display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap }
+    .leg { padding:3px 10px; border-radius:6px; font-size:11px; font-weight:500 }
+    .tc { background:#f9f9f9; font-size:10px; font-weight:500; color:#888; text-align:right; white-space:nowrap; width:52px }
+    .bl { border-radius:4px; padding:3px 5px; margin:2px 0; font-size:10px; line-height:1.4; display:block }
+    .el { opacity:0.6; font-style:italic }
+    .nm { font-weight:600; font-size:0.85em; display:flex; align-items:center; margin-bottom:1px }
+    .note { font-size:10px; color:#888; margin-top:8px; padding:6px 8px; background:#f9f9f9; border-radius:6px }
+    #status { font-size:11px; color:#888 }
 
-                "Zathral" : {
-                    "colour" : "#271818",
-                    "background_colour" : "#90EDE2",
-                    "code" : "AI And Data",
-                    "timetable" : [
-                        {day: 1, start: '10.00', end: '11.00', code_name: 'COMT', name: 'Data Processing and Visualisation', classroom: 'E-Learning', online: true},
-                        {day: 2, start: '9.00', end: '11.00', code_name: 'ICSD', name: 'Intelligent Control Sys Dev', classroom: 'R.412 SEG'},
-                        {day: 2, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '12.00', end: '14.00', code_name: 'DEP', name: 'Data Engineering Project', classroom: 'S.130A SEG'},
-                        {day: 2, start: '14.00', end: '15.00', code_name: 'MAPDEV', name: 'Mobile Application Development', classroom: 'L.635 SIT'},
-                        {day: 2, start: '15.00', end: '16.00', code_name: 'GSEFX', name: 'Green Screen Effects', classroom: 'N1.507 SDM'},
-                        {day: 2, start: '16.00', end: '17.00', code_name: 'EVOGMS', name: 'Evolution of Games', classroom: 'M.414 SDM'},
-                        {day: 3, start: '11.00', end: '12.00', code_name: 'PEM (Even)', name: 'Homeroom', classroom: 'S.306 SEG'},
-                        {day: 3, start: '12.00', end: '13.00', name: '🍽 Lunch', break: true},
-                        {day: 3, start: '13.00', end: '15.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'P.507 SEG'}, 
-                        {day: 3, start: '15.00', end: '18.00', code_name: 'DPV', name: 'Data Prep & Visualisation', classroom: 'P.507 SEG'}, 
-                        {day: 4, start: '11.00', end: '13.00', code_name: 'CCD', name: 'Cloud Computing Development', classroom: 'P.507'},
-                        {day: 4, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 4, start: '14.00', end: '16.00', code_name: 'AML', name: 'Applied Machine Learning', classroom: 'P.507 SEG'}, 
-                        
-                        
-                        
-                        {day: 5, start: '8.00', end: '10.00', code_name: 'SDCA', name: 'Sensor Data Collection & Analysis', classroom: 'S.373 SEG'},
-                        {day: 5, start: '10.00', end: '12.00', code_name: 'DSM', name: 'Data Security & Management', classroom: 'S.342 SEG'} 
-                    ]
-                },
+    /* Modals shared */
+    .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); z-index:200; overflow-y:auto; padding:20px 10px; }
+    .modal-box { background:#fff; margin:0 auto; max-width:940px; border-radius:12px; padding:24px; border:0.5px solid #e0e0e0; }
+    .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+    .modal-title { font-size:14px; font-weight:600; color:#1a1a1a; }
+    .modal-close { background:none; border:none; cursor:pointer; font-size:16px; color:#aaa; line-height:1; padding:4px 8px; border-radius:4px; }
+    .modal-close:hover { background:#f0f0f0; color:#333; }
+    .form-row { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; }
+    .form-group { display:flex; flex-direction:column; gap:4px; }
+    .form-group label { font-size:10px; color:#999; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+    .form-input { padding:6px 10px; border:0.5px solid #ccc; border-radius:6px; font-size:12px; outline:none; background:#fff; font-family:Arial,sans-serif; }
+    .form-input:focus { border-color:#B5D4F4; box-shadow:0 0 0 2px rgba(11,68,124,0.07); }
+    .section-label { font-size:11px; font-weight:600; color:#444; margin:14px 0 8px; }
+    .entry-col-header { font-size:9px; color:#bbb; text-transform:uppercase; letter-spacing:0.4px; }
+    .entry-row { display:flex; gap:5px; align-items:center; padding:5px 8px; background:#f9f9f9; border-radius:6px; margin-bottom:5px; }
+    .entry-row input, .entry-row select { padding:4px 5px; border:0.5px solid #ddd; border-radius:4px; font-size:11px; outline:none; background:#fff; font-family:Arial,sans-serif; }
+    .entry-row input:focus, .entry-row select:focus { border-color:#B5D4F4; }
+    .entry-chk { display:flex; align-items:center; gap:3px; font-size:10px; color:#666; white-space:nowrap; }
+    .del-btn { padding:3px 7px; background:#fff0f0; border:0.5px solid #ffcccc; border-radius:4px; color:#c00; cursor:pointer; font-size:11px; flex-shrink:0; line-height:1.4; }
+    .del-btn:hover { background:#ffe0e0; }
+    .add-entry-btn { padding:7px 12px; border:0.5px dashed #bbb; border-radius:6px; background:#fafafa; cursor:pointer; font-size:11px; color:#666; margin-top:6px; width:100%; text-align:left; }
+    .add-entry-btn:hover { background:#f0f0f0; }
+    .save-btn { padding:7px 18px; background:#0C447C; border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:12px; font-weight:600; }
+    .save-btn:hover { background:#0a3a6b; }
+    .cancel-btn { padding:7px 16px; background:#f5f5f5; border:0.5px solid #ccc; border-radius:8px; color:#555; cursor:pointer; font-size:12px; }
+    .cancel-btn:hover { background:#eee; }
+    .info-box { background:#f9f9f9; border-radius:8px; padding:12px; margin-bottom:14px; }
+    .danger-btn { padding:7px 14px; background:#fff0f0; border:0.5px solid #ffcccc; border-radius:8px; color:#c00; cursor:pointer; font-size:12px; margin-right:auto; }
+    .danger-btn:hover { background:#ffe0e0; }
 
-                "Shadow" : {
-                    "colour" : "#5c4a3d",
-                    "background_colour" : "#e8d5b7",
-                    "code" : "Digital Product",
-                    "timetable" : [
-                        {day: 1, start: '9.00', end: '11.00', code_name: 'AM', name: 'Applied Mechanics', classroom: 'S.522 SEG'},
-                        {day: 1, start: '11.00', end: '13.00', code_name: 'PROG', name: 'Programming', classroom: 'S.558 SEG'},
-                        {day: 2, start: '11.00', end: '13.00', code_name: 'PROG', name: 'Programming', classroom: 'S.558 SEG'},
-                        {day: 2, start: '13.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '14.00', end: '16.00', code_name: 'AM', name: 'Applied Mechanics', classroom: 'S.476 SEG'},
-                        {day: 2, start: '16.00', end: '17.00', code_name: 'PCS1', name: 'Professional Core Skills', classroom: 'S.476 SEG'},
-                        {day: 2, start: '17.00', end: '18.00', code_name: 'PEM (Odd)', name: 'Professional Ethics & Mindset', classroom: 'S.476 SEG'},
-                        {day: 3, start: '9.00', end: '11.00', code_name: 'ADA', name: 'Advanced Data Analysis', classroom: 'E-Learning', online: true},
-                        {day: 3, start: '14.00', end: '16.00', code_name: 'ADA', name: 'Advanced Data Analysis', classroom: 'S.521 SEG'},
-                        {day: 3, start: '16.00', end: '18.00', code_name: 'ABFC', name: 'Abstract Fundamentals', classroom: 'S.521 SEG'},
-                        {day: 4, start: '12.00', end: '15.00', code_name: 'UDWD', name: 'User Design & Web Dev', classroom: 'S.539 SEG'},
-                        {day: 5, start: '9.00', end: '11.00', code_name: 'ABFC', name: 'Abstract Fundamentals', classroom: 'E-Learning', online: true}
-                    ]
-                },
+    /* Font section */
+    .font-row { display:flex; gap:6px; align-items:center; margin-top:10px; }
+    .font-url-input { flex:1; padding:6px 10px; border:0.5px solid #ccc; border-radius:6px; font-size:12px; outline:none; font-family:Arial,sans-serif; min-width:0; }
+    .font-url-input:focus { border-color:#B5D4F4; box-shadow:0 0 0 2px rgba(11,68,124,0.07); }
+    .font-test-btn { padding:6px 12px; border-radius:6px; border:0.5px solid #ccc; background:#fff; cursor:pointer; font-size:12px; font-weight:500; white-space:nowrap; flex-shrink:0; }
+    .font-test-btn:hover { background:#f5f5f5; }
+    .font-test-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .font-clear-btn { padding:6px 10px; border-radius:6px; border:0.5px solid #ffcccc; background:#fff0f0; cursor:pointer; font-size:12px; color:#c00; flex-shrink:0; }
+    .font-clear-btn:hover { background:#ffe0e0; }
+    #font-preview-area { display:none; margin-top:8px; padding:10px 12px; background:#fff; border:0.5px solid #e0e0e0; border-radius:6px; }
+    #font-preview-sample { font-size:15px; margin-bottom:4px; }
+    #font-preview-status { font-size:10px; color:#888; }
+    .font-badge { display:inline-flex; align-items:center; gap:4px; font-size:9px; padding:1px 5px; border-radius:3px; background:#e8f4e8; color:#3a7d3a; border:0.5px solid #b8ddb8; margin-left:4px; vertical-align:middle; }
 
-                "Game" : {
-                    "colour" : "#1e3a5f",
-                    "background_colour" : "#d4e8f0",
-                    "code" : "IT",
-                    "timetable" : [
-                        {day: 1, start: '14.00', end: '17.00', code_name: 'BIE', name: 'Biomedical Information Engineering', classroom: 'L.605 SIT'},
-                        {day: 2, start: '8.00', end: '9.00', code_name: 'NETWKT', name: 'Network Technology', classroom: 'E-Learning SIT', online: true},
-                        {day: 2, start: '9.00', end: '12.00', code_name: 'PROG', name: 'Programming', classroom: 'L.637 SIT'},
-                        {day: 2, start: '12.00', end: '14.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '14.00', end: '15.00', code_name: 'PEM', name: 'Professional Ethics & Mindset', classroom: 'L.530 SIT'},
-                        {day: 2, start: '15.00', end: '16.00', code_name: 'PCS1', name: 'Professional Core Skills', classroom: 'L.530 SIT'},
-                        {day: 2, start: '16.00', end: '18.00', code_name: 'AMATHC', name: 'Applied Mathematics & Critical Thinking', classroom: 'L.502 SIT'},
-                        {day: 3, start: '9.00', end: '12.00', code_name: 'NETWKT', name: 'Network Technology', classroom: 'L.606 SIT'},
-                        {day: 3, start: '12.00', end: '13.00', name: '🍽 Lunch', break: true},
-                        {day: 3, start: '13.00', end: '17.00', code_name: 'UXDWD', name: 'UX Design & Web Dev', classroom: 'L.604 SIT'},
-                        {day: 5, start: '13.00', end: '14.00', code_name: 'BIE', name: 'Biomedical Information Engineering', classroom: 'E-Learning', online: true},
-                        {day: 5, start: '14.00', end: '15.00', code_name: 'UXDWD', name: 'UX Design & Web Dev', classroom: 'E-Learning', online: true},
-                        {day: 5, start: '15.00', end: '16.00', code_name: 'PROG', name: 'Programming', classroom: 'E-Learning', online: true}
-                    ]
-                },
+    /* Events modal */
+    .event-card { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; background:#f9f9f9; border-radius:8px; margin-bottom:8px; border-left:3px solid #ccc; }
+    .event-card-body { flex:1; }
+    .event-card-title { font-size:12px; font-weight:600; color:#1a1a1a; }
+    .event-card-date  { font-size:10px; color:#888; margin-top:2px; }
+    .event-card-note  { font-size:11px; color:#555; margin-top:4px; }
+    .event-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; margin-top:2px; }
+    .event-empty { font-size:12px; color:#bbb; text-align:center; padding:24px 0; }
+    .events-add-form { background:#f0f6ff; border-radius:8px; padding:14px; margin-top:14px; border:0.5px solid #d0e4f8; }
 
-                "Waffles" : {
-                    "colour" : "#8b5a00",
-                    "background_colour" : "#fff4e6",
-                    "code" : "Business",
-                    "timetable" : [
-                        {day: 1, start: '9.00', end: '11.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
-                        {day: 1, start: '11.00', end: '13.00', name: '🍽 Lunch', break: true},
-                        {day: 1, start: '13.00', end: '15.00', code_name: 'IT110F', name: 'IT Fundamentals', classroom: 'L.631 SIT'},
-                        {day: 1, start: '15.00', end: '17.00', code_name: 'PDL', name: 'Professional Development', classroom: 'P.504 SEG'},
-                        {day: 2, start: '9.00', end: '11.00', code_name: 'FG105F', name: 'Front-End Design', classroom: 'G.221 NYP'},
-                        {day: 2, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
-                        {day: 2, start: '12.00', end: '14.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
-                        {day: 3, start: '9.00', end: '11.00', code_name: 'PDL', name: 'Professional Development', classroom: 'S.336 SEG'},
-                        {day: 3, start: '11.00', end: '12.00', name: '🍽 Lunch', break: true},
-                        {day: 3, start: '12.00', end: '14.00', code_name: 'FM1', name: 'Financial Management', classroom: 'P.504 SEG'},
-                        {day: 3, start: '14.00', end: '16.00', code_name: 'IT110F', name: 'IT Fundamentals', classroom: 'L.631 SIT'},
-                        {day: 4, start: '9.00', end: '11.00', code_name: 'FM1', name: 'Financial Management', classroom: 'P.504 SEG'},
-                        {day: 4, start: '11.00', end: '13.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'P.504 SEG'},
-                        {day: 5, start: '8.00', end: '9.00', code_name: 'ELCOM1', name: 'E-Learning Communication', classroom: 'E-Learning', online: true},
-                        {day: 5, start: '10.00', end: '12.00', code_name: 'FG104F', name: '', classroom: 'LTQ-10 CILS'}
-                    ]
-                }
+    /* Placeholder page */
+    #placeholder-page { display:none; padding:0.5rem 0; }
+    .ph-header { display:flex; align-items:center; gap:12px; padding:10px 12px; background:#f5f5f5; border-radius:8px; margin-bottom:20px; border:0.5px solid #e0e0e0; }
+    .ph-back-btn { padding:6px 14px; border-radius:8px; border:0.5px solid #ccc; background:#fff; cursor:pointer; font-size:12px; font-weight:500; color:#1a1a1a; display:flex; align-items:center; gap:5px; }
+    .ph-back-btn:hover { background:#eee; }
+    .ph-page-title { font-size:14px; font-weight:600; color:#333; }
+    .ph-content { display:flex; align-items:center; justify-content:center; min-height:300px; border:1.5px dashed #ddd; border-radius:12px; background:#fafafa; }
+    .ph-placeholder-text { text-align:center; color:#bbb; }
+    .ph-placeholder-text p { font-size:18px; font-weight:600; margin-bottom:6px; color:#ccc; }
+    .ph-placeholder-text span { font-size:12px; color:#ddd; }
 
-                
-            }
-        }
-    </script>
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
+    .shake { animation: shake 0.3s ease; }
 
-<!-- style info for decoration -->
-    <style>
+    /* Dark mode */
+    body.dark { background:#1a1a1a; color:#e0e0e0; }
+    body.dark th { background:#252525; color:#aaa; }
+    body.dark th, body.dark td { border-color:#3a3a3a; }
+    body.dark .tc { background:#252525; color:#777; }
+    body.dark #capture-area { background:#1e1e1e; border-color:#3a3a3a; }
+    body.dark .tab { background:#252525; border-color:#3a3a3a; color:#aaa; }
+    body.dark .tab.active { background:#1a3555; color:#7ab3e0; border-color:#2e5a8e; }
+    body.dark .btn { background:#252525; border-color:#3a3a3a; color:#e0e0e0; }
+    body.dark .btn:hover { background:#2e2e2e; }
+    body.dark .btn-add { background:#1a3555; border-color:#2e5a8e; color:#7ab3e0; }
+    body.dark .btn-add:hover { background:#1e3e62; }
+    body.dark .modal-box { background:#232323; border-color:#3a3a3a; }
+    body.dark .modal-title { color:#e0e0e0; }
+    body.dark .modal-close { color:#888; }
+    body.dark .modal-close:hover { background:#2e2e2e; color:#ccc; }
+    body.dark .section-label { color:#ccc; }
+    body.dark .form-group label { color:#777; }
+    body.dark .form-input { background:#1a1a1a; border-color:#4a4a4a; color:#e0e0e0; }
+    body.dark .form-input:focus { border-color:#4a82b4; }
+    body.dark .info-box { background:#1e1e1e; }
+    body.dark .entry-row { background:#1e1e1e; }
+    body.dark .entry-row input, body.dark .entry-row select { background:#141414; border-color:#4a4a4a; color:#e0e0e0; }
+    body.dark .entry-chk { color:#aaa; }
+    body.dark .entry-col-header { color:#555; }
+    body.dark .add-entry-btn { background:#1e1e1e; border-color:#4a4a4a; color:#aaa; }
+    body.dark .add-entry-btn:hover { background:#252525; }
+    body.dark .cancel-btn { background:#2a2a2a; border-color:#4a4a4a; color:#ccc; }
+    body.dark .cancel-btn:hover { background:#333; }
+    body.dark .danger-btn { background:#2e1414; border-color:#6a2a2a; color:#ff8888; }
+    body.dark .danger-btn:hover { background:#3a1818; }
+    body.dark .del-btn { background:#2e1414; border-color:#6a2a2a; color:#ff8888; }
+    body.dark .del-btn:hover { background:#3a1818; }
+    body.dark .note { background:#1e1e1e; color:#777; }
+    body.dark .event-card { background:#1e1e1e; }
+    body.dark .event-card-title { color:#e0e0e0; }
+    body.dark .event-card-date { color:#777; }
+    body.dark .event-card-note { color:#aaa; }
+    body.dark .event-empty { color:#555; }
+    body.dark .events-add-form { background:#182433; border-color:#1e3a55; }
+    body.dark .font-url-input { background:#1a1a1a; border-color:#4a4a4a; color:#e0e0e0; }
+    body.dark .font-test-btn { background:#252525; border-color:#4a4a4a; color:#e0e0e0; }
+    body.dark .font-test-btn:hover { background:#2e2e2e; }
+    body.dark .font-clear-btn { background:#2e1414; border-color:#6a2a2a; color:#ff8888; }
+    body.dark .font-clear-btn:hover { background:#3a1818; }
+    body.dark #font-preview-area { background:#1a1a1a; border-color:#3a3a3a; }
+    body.dark .font-badge { background:#1a3520; border-color:#2a5530; color:#7acc7a; }
+    body.dark .gh-status-badge { background:#252525; border-color:#3a3a3a; color:#aaa; }
+    body.dark .gh-status-badge.gh-ok { background:#1a3520; border-color:#2a5530; color:#7acc7a; }
+    body.dark .gh-status-badge.gh-saving { background:#2e2714; border-color:#5a4e1e; color:#ccaa44; }
+    body.dark .gh-status-badge.gh-error { background:#2e1414; border-color:#6a2a2a; color:#ff8888; }
+    body.dark .ph-header { background:#1e1e1e; border-color:#3a3a3a; }
+    body.dark .ph-back-btn { background:#252525; border-color:#4a4a4a; color:#e0e0e0; }
+    body.dark .ph-back-btn:hover { background:#2e2e2e; }
+    body.dark .ph-page-title { color:#ccc; }
+    body.dark .ph-content { background:#141414; border-color:#2a2a2a; }
+    body.dark #edit-avatar-preview { border-color:#4a4a4a; }
 
-        /* defaults all to 0 */
-        * {
-            box-sizing: 0;
-            margin: 0;
-            padding: 0;
-        }
+    /* GitHub sync */
+    .gh-status-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; padding:3px 8px; border-radius:5px; background:#f5f5f5; border:0.5px solid #ddd; color:#666; white-space:nowrap; cursor:pointer; }
+    .gh-status-badge.gh-saving { background:#FFF8E1; border-color:#FFD54F; color:#8a6800; }
+    .gh-status-badge.gh-ok     { background:#e8f5e9; border-color:#a5d6a7; color:#2e7d32; }
+    .gh-status-badge.gh-error  { background:#ffebee; border-color:#ffcdd2; color:#c00; }
 
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            color: #1a1a1a;
-        }
+    /* Category sub-tabs */
+    .tab-group { display:inline-flex; flex-direction:column; gap:3px; align-items:flex-start; }
+    .tab-group > .tab { margin:0; }
+    .sub-tabs { display:flex; gap:3px; padding-left:2px; }
+    .sub-tab { padding:2px 7px; border-radius:5px; border:0.5px solid #ddd; background:#f9f9f9; cursor:pointer; font-size:10px; font-weight:500; color:#888; line-height:1.6; }
+    .sub-tab.active { background:#E6F1FB; color:#0C447C; border-color:#B5D4F4; }
+    body.dark .sub-tab { background:#1e1e1e; border-color:#3a3a3a; color:#666; }
+    body.dark .sub-tab.active { background:#1a3555; color:#7ab3e0; border-color:#2e5a8e; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed
-        }
+    /* Full-resolution desktop: table fills viewport */
+    html, body { width: 100%; }
+    #capture-area .view > div { width: 100%; }
+    table { width: 100%; table-layout: fixed; min-width: 0; }
 
-        /* shared for both th and td */
-        th, td {
-            border: 0.5px solid #ddd;
-            padding: 5px 7px;
-            vertical-align: top;
-            font-size: 11px;
-            word-break: break-word
-        }
+    /* Mobile responsive */
+    @media (max-width: 700px) {
+      body { font-size: 12px; }
 
-        /* special for th */
-        th {
-            background: #f5f5f5;
-            font-weight: 500;
-            font-size: 11px;
-            color: #555;
-            text-align: center
-        }
-        
+      /* Toolbar: stack tabs above export buttons */
+      .toolbar { flex-direction: column; align-items: stretch; gap: 6px; }
+      .tabs { margin-left: 0; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+      .tab-group { flex-direction: row; align-items: center; }
+      .tab-group > .tab { white-space: nowrap; }
+      .sub-tabs { flex-wrap: nowrap; }
 
-        .toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-        }    
+      /* Export bar: horizontally scrollable single row */
+      .exports { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; gap: 4px; }
+      .btn { white-space: nowrap; flex-shrink: 0; padding: 6px 9px; font-size: 11px; }
+      #gh-status-badge { flex-shrink: 0; }
 
-        .tabs {
-            display: flex;
-            margin-left: 8px;
-            gap: 6px;
-            flex-wrap: wrap
-        }
+      /* Table: horizontal scroll for narrow screens */
+      #capture-area { padding: 6px; overflow: hidden; }
+      #capture-area .view { width: 100%; }
+      #capture-area .view > div { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; }
 
-        .tab {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 0.5px solid #ccc;
-            background: #f5f5f5;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            color: #555
-        }
+      /* On small screens, lock to a scrollable minimum so content stays readable */
+      table { table-layout: fixed; width: max(100vw - 12px, 580px); min-width: max(100vw - 12px, 580px); }
+      th, td { font-size: 10px; padding: 3px 4px; vertical-align: top; }
 
-        .tab.active {
-            background: #E6F1FB;
-            color: #0C447C;
-            border-color: #B5D4F4
-        }
+      /* Time column: sticky + compact */
+      .tc { position: sticky; left: 0; z-index: 1; background: #f9f9f9; width: 42px; min-width: 42px; max-width: 42px; font-size: 9px; white-space: nowrap; }
+      body.dark .tc { background: #252525; }
+      th.tc { z-index: 2; background: #f5f5f5; }
+      body.dark th.tc { background: #252525; }
 
-        .exports {
-            display: flex;
-            gap: 6px;
-            align-items: center
-        }
+      /* Day columns: share remaining space equally */
+      th:not(.tc), td:not(.tc) { width: calc((100% - 42px) / 5); }
 
-        .btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 0.5px solid #ccc;
-            background: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            gap: 4px
-        }
+      /* Block items: wrap nicely */
+      .bl {
+        font-size: 10px;
+        line-height: 1.35;
+        padding: 4px 5px;
+        margin: 2px 0;
+        white-space: normal;
+        overflow: visible;
+        display: flex !important;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 4px;
+        word-break: break-word;
+      }
+      .bl > span:first-child { flex: 1; min-width: 0; }
+      .bl .nm { font-size: 10px; font-weight: 700; white-space: normal; display: block; margin-bottom: 1px; }
+      .bl img { width: 22px !important; height: 22px !important; flex-shrink: 0; margin-top: 1px; }
 
-        .btn:hover {
-            background: #f5f5f5
-        }
+      /* Legend chips: scroll horizontally */
+      .legend-row { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+      .leg { white-space: nowrap; flex-shrink: 0; }
 
-        .btn svg {
-            width: 14px;
-            height: 14px;
-            flex-shrink: 0
-        }
+      /* Modals: full-width, reduce padding */
+      .modal-overlay { padding: 10px 6px; }
+      .modal-box { padding: 16px 12px; border-radius: 8px; }
 
-        .view {
-            display: none
-        }
+      /* Edit modal form: stack all fields vertically */
+      .form-row { flex-direction: column; align-items: stretch; gap: 8px; }
+      .form-group { width: 100% !important; }
+      .form-group input[style*="width"] { width: 100% !important; }
+      .form-group input[type="color"] { width: 100% !important; height: 36px !important; }
 
-        .view.active {
-            display: block
-        }
+      /* Font row: stack test button below URL input */
+      .font-row { flex-wrap: wrap; }
+      .font-url-input { min-width: 0; flex: 1 1 100%; }
 
-        #capture-area{background:#fff;padding:12px;border-radius:8px;border:0.5px solid #e0e0e0}
-        .legend-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-        .leg{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:500}
-        .tc{background:#f9f9f9;font-size:10px;font-weight:500;color:#888;text-align:right;white-space:nowrap;width:52px}
-        .bl{border-radius:4px;padding:3px 5px;margin:2px 0;font-size:10px;line-height:1.4;display:block}
-        .el{opacity:0.6;font-style:italic}
-        .nm{font-weight:600;font-size:9px;display:block;margin-bottom:1px}
-        .note{font-size:10px;color:#888;margin-top:8px;padding:6px 8px;background:#f9f9f9;border-radius:6px}
-        #status{font-size:11px;color:#888}
+      /* Timetable entry rows in edit modal: allow horizontal scroll */
+      #edit-entries-list { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .entry-row { min-width: 560px; }
 
+      /* Entry column headers: also scroll */
+      div[style*="entry-col-header"] { min-width: 560px; }
+      .entry-col-header { white-space: nowrap; }
 
-    </style>
+      /* Events modal form */
+      .events-add-form .form-row { flex-direction: column; }
 
+      /* Status badge text hidden on very small screens to save space */
+      #gh-status-badge span { display: none; }
+    }
 
+    @media (max-width: 420px) {
+      .btn span, .btn-label { display: none; }
+      .btn svg { margin: 0; }
+      .btn { padding: 6px 8px; gap: 0; }
+      /* Keep labels for critical buttons */
+      #darkmode-btn span { display: inline; }
+    }
+
+    /* Save-to-file banner */
+    #save-file-bar {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 10px 16px;
+      background: #0C447C;
+      color: #fff;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.18);
+    }
+    #save-file-bar.visible { display: flex; }
+    #save-file-bar span { flex: 1; }
+    #save-file-bar button {
+      padding: 6px 14px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 12px; font-weight: 600; font-family: Arial, sans-serif;
+    }
+    #sfb-save { background: #fff; color: #0C447C; }
+    #sfb-save:hover { background: #e8f2fc; }
+    #sfb-dismiss { background: rgba(255,255,255,0.18); color: #fff; }
+    #sfb-dismiss:hover { background: rgba(255,255,255,0.28); }
+    body.dark #save-file-bar { background: #1a3555; }
+    body.dark #sfb-save { color: #1a3555; }
+  </style>
 </head>
 
+<body style="" class="dark">
 
-<!-- start body (visible to users) -->
-<body>
-    <!-- full body -->
-    <div style = "padding: 0.5rem 0">
+<script id="data-script">
+const data = {
+  "users": {
+    "Charles": {
+      "colour": "#10579d",
+      "background_colour": "#f7dbe5",
+      "free_colour": "#c1a9a9",
+      "avatar": "https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png",
+      "free_avatar": "https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png",
+      "code": "AI And Data",
+      "font_url": "",
+      "font_size": 10,
+      "timetable": [
+        {
+          "day": 1,
+          "start": "9.00",
+          "end": "11.00",
+          "code_name": "AML",
+          "name": "Applied Machine Learning",
+          "classroom": "S.310 SEG"
+        },
+        {
+          "day": 1,
+          "start": "11.00",
+          "end": "13.00",
+          "code_name": "CCD",
+          "name": "Cloud Computing Development",
+          "classroom": "S.310 SEG"
+        },
+        {
+          "day": 1,
+          "start": "13.00",
+          "end": "14.00",
+          "name": "🍽 Lunch",
+          "break": true
+        },
+        {
+          "day": 1,
+          "start": "14.00",
+          "end": "16.00",
+          "code_name": "DEP",
+          "name": "Data Engineering Project",
+          "classroom": "S.130A SEG"
+        },
+        {
+          "day": 1,
+          "start": "16.00",
+          "end": "18.00",
+          "code_name": "",
+          "name": "Gym",
+          "classroom": "T-Junction",
+          "category": "free"
+        },
+        {
+          "day": 2,
+          "start": "10.00",
+          "end": "13.00",
+          "code_name": "DPV",
+          "name": "Data Prep & Visualisation",
+          "classroom": "S.310 SEG"
+        },
+        {
+          "day": 2,
+          "start": "13.00",
+          "end": "15.00",
+          "name": "🍽 Lunch",
+          "break": true
+        },
+        {
+          "day": 2,
+          "start": "13.00",
+          "end": "14.00",
+          "code_name": "",
+          "name": "Gym",
+          "classroom": "T-Junction",
+          "category": "free"
+        },
+        {
+          "day": 2,
+          "start": "15.00",
+          "end": "16.00",
+          "code_name": "DXX212",
+          "name": "Visual Arts Appreciation",
+          "classroom": "N1.813 SDM"
+        },
+        {
+          "day": 2,
+          "start": "16.00",
+          "end": "17.00",
+          "code_name": "DXX208",
+          "name": "Elements of Interior Design",
+          "classroom": "M.406 SDM"
+        },
+        {
+          "day": 2,
+          "start": "17.00",
+          "end": "18.00",
+          "code_name": "BMX212",
+          "name": "Understanding Contracts & the Law",
+          "classroom": "LTD-5 SBM"
+        },
+        {
+          "day": 3,
+          "start": "10.00",
+          "end": "11.00",
+          "code_name": "PEM (Even)",
+          "name": "Homeroom",
+          "classroom": "S.310 SEG"
+        },
+        {
+          "day": 3,
+          "start": "11.00",
+          "end": "13.00",
+          "code_name": "AML",
+          "name": "Applied Machine Learning",
+          "classroom": "S.310 SEG"
+        },
+        {
+          "day": 3,
+          "start": "13.00",
+          "end": "14.00",
+          "name": "🍽 Lunch",
+          "break": true
+        },
+        {
+          "day": 3,
+          "start": "14.00",
+          "end": "16.00",
+          "code_name": "DSM",
+          "name": "Data Security & Management",
+          "classroom": "S.342 SEG"
+        },
+        {
+          "day": 4,
+          "start": "10.00",
+          "end": "12.00",
+          "code_name": "",
+          "name": "Gym",
+          "classroom": "T-Junction",
+          "category": "free"
+        },
+        {
+          "day": 4,
+          "start": "12.00",
+          "end": "13.00",
+          "code_name": "",
+          "name": "🍽 Lunch",
+          "classroom": "",
+          "break": true,
+          "category": "free"
+        },
+        {
+          "day": 4,
+          "start": "13.00",
+          "end": "15.00",
+          "code_name": "ICSD",
+          "name": "Intelligent Control System Dev",
+          "classroom": "R.412 SEG"
+        },
+        {
+          "day": 4,
+          "start": "15.00",
+          "end": "17.00",
+          "code_name": "SDCA",
+          "name": "Sensor Data Collection & Analysis",
+          "classroom": "S.373 SEG"
+        },
+        {
+          "day": 5,
+          "start": "9.00",
+          "end": "10.00",
+          "code_name": "DPV",
+          "name": "Data Prep & Visualisation",
+          "classroom": "E-Learning",
+          "online": true
+        }
+      ],
+      "catVisibility": {
+        "class": true,
+        "free": true
+      }
+    }
+  }
+};
+</script>
 
-        <!-- toolbar at the top -->
-        <div class = "toolbar">
+<!--      EDIT / ADD PERSON MODAL (shared) -->
+<div id="edit-modal" class="modal-overlay" onclick="if(event.target===this)closeEditModal()" style="display: none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="edit-modal-title">✏ Edit Schedule</span>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
 
-            <!-- display names and all button -->
-            <div class = "tabs", id = "list_names"> </div>
+    <!-- Person selector — hidden in add mode -->
+    <div id="edit-selector-row" class="form-row" style="margin-bottom: 14px; align-items: center; display: flex;">
+      <div class="form-group">
+        <label>Person</label>
+        <select id="edit-user-select" class="form-input" onchange="loadUserForEdit()" style="min-width:160px"><option value="Charles">Charles</option></select>
+      </div>
+      <div id="edit-colour-preview" style="width: 36px; height: 36px; border-radius: 8px; border: 2px solid rgb(16, 87, 157); margin-top: 18px; flex-shrink: 0; background: rgb(247, 219, 229);"></div>
+    </div>
 
-            <!-- export button -->
-            <div class = "exports">
+    <!-- Colour preview for add-mode -->
+    <div id="edit-add-preview-row" style="display:none;margin-bottom:14px;">
+      <div id="edit-colour-preview-add" style="width: 36px; height: 36px; border-radius: 8px; border: 2px solid rgb(16, 87, 157); background: rgb(247, 219, 229);"></div>
+    </div>
 
-                <!-- png button -->
-                <button class = "btn", onclick="exportPNG()">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"/><path d="M2 9l3-3 3 3 2-2 4 3"/><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"/></svg>PNG
-                </button>
-
-                <span id="status"></span>
-            </div>
+    <!-- Person info -->
+    <div class="info-box">
+      <div class="section-label" style="margin-top:0">Person Info</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Display Name</label>
+          <input id="edit-username" class="form-input" type="text" placeholder="Name" style="width:140px">
         </div>
+        <div class="form-group">
+          <label>Course / Programme</label>
+          <input id="edit-code" class="form-input" type="text" placeholder="e.g. AI And Data" style="width:160px">
+        </div>
+        <div class="form-group">
+          <label>Text Colour</label>
+          <input id="edit-colour" class="form-input" type="color" style="width:52px;padding:3px;height:33px;" oninput="updateColourPreview()">
+        </div>
+        <div class="form-group">
+          <label>Background</label>
+          <input id="edit-bg-colour" class="form-input" type="color" style="width:52px;padding:3px;height:33px;" oninput="updateColourPreview()">
+        </div>
+        <div class="form-group">
+          <label>Free Time Colour</label>
+          <input id="edit-free-colour" class="form-input" type="color" style="width:52px;padding:3px;height:33px;" title="Background colour used for Free Time blocks (leave same as Background if you don't want a difference)">
+        </div>
+        <div class="form-group" style="flex:1;min-width:180px;">
+          <label>Avatar URL <span style="font-weight:400;opacity:0.6;text-transform:none;letter-spacing:0;">(class blocks)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="edit-avatar" class="form-input" type="text" placeholder="https://..." style="flex:1;min-width:0;" oninput="previewAvatar(this.value)">
+            <img id="edit-avatar-preview" src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" alt="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgb(221, 221, 221); flex-shrink: 0; display: block;" onerror="this.style.display='none'">
+          </div>
+        </div>
+        <div class="form-group" style="flex:1;min-width:180px;">
+          <label>Free Time Avatar URL <span style="font-weight:400;opacity:0.6;text-transform:none;letter-spacing:0;">(free blocks)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="edit-free-avatar" class="form-input" type="text" placeholder="https://... (leave blank to use main avatar)" style="flex:1;min-width:0;" oninput="previewFreeAvatar(this.value)">
+            <img id="edit-free-avatar-preview" src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" alt="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgb(221, 221, 221); flex-shrink: 0; display: block;" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
 
-        <!-- all items -->
-        <div id="capture-area">
-
-            <!-- legends -->
-            <div class="legend-row", id="list_colour"> </div>
-
-            <!-- timetable -->
-            <div class="view active" id="view-all">
-                <div style="overflow-x:auto"><table>
-                    <thead>
-                        <tr>
-                            <th class="tc">Time</th>
-                            <th>Monday</th>
-                            <th>Tuesday</th>
-                            <th>Wednesday</th>
-                            <th>Thursday</th>
-                            <th>Friday</th>
-                        </tr>
-                    </thead>
-
-            <!-- main section -->
-            <tbody id = "timetable"></tbody>
-        </table>
+      <!-- Custom Font -->
+      <div style="margin-top:12px;">
+        <div style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px;">
+          Custom Font
+          <span id="font-active-badge" class="font-badge" style="display:none;">✓ Active</span>
+        </div>
+        <div class="font-row">
+          <input id="edit-font-url" class="font-url-input" type="text" placeholder="Paste a .ttf / .woff2 URL — e.g. https://raw.githubusercontent.com/...">
+          <button class="font-test-btn" id="font-test-btn" onclick="testFont()">Test Font</button>
+          <button class="font-clear-btn" onclick="clearFont()" title="Remove custom font">✕</button>
+        </div>
+        <div class="font-row" style="margin-top:6px;align-items:center;gap:8px;">
+          <span style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;">Font Size</span>
+          <input id="edit-font-size" type="number" min="6" max="30" step="1" class="form-input" style="width:64px;padding:5px 8px;" title="Size in px — default is 10">
+          <span style="font-size:11px;color:#aaa;">px</span>
+          <span style="font-size:10px;color:#ccc;">(default 10)</span>
+        </div>
+        <div id="font-preview-area" style="display: none;">
+          <div id="font-preview-sample"></div>
+          <div id="font-preview-status"></div>
+        </div>
+      </div>
     </div>
 
-    <p class="note">Italic/faded = e-learning.</p>
-
+    <!-- Timetable entries -->
+    <div class="section-label">Timetable Entries</div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <div style="display:flex;gap:5px;padding:0 8px 5px;align-items:center;min-width:560px;">
+      <span class="entry-col-header" style="width:52px">Day</span>
+      <span class="entry-col-header" style="width:52px">Start<br><span style="font-weight:400;opacity:0.7">9.00/9.30</span></span>
+      <span class="entry-col-header" style="width:52px">End<br><span style="font-weight:400;opacity:0.7">9.00/9.30</span></span>
+      <span class="entry-col-header" style="width:72px">Code</span>
+      <span class="entry-col-header" style="flex:1">Subject Name</span>
+      <span class="entry-col-header" style="width:110px">Classroom</span>
+      <span class="entry-col-header" style="width:38px">Brk</span>
+      <span class="entry-col-header" style="width:50px">Online</span>
+      <span class="entry-col-header" style="width:52px">Category</span>
+      <span style="width:28px"></span>
     </div>
-    
+    <div id="edit-entries-list" style="max-height:260px;overflow-y:auto;overflow-x:visible;min-width:560px;"><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(0,'day',parseInt(this.value))">
+        <option value="1" selected="">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="9.00" placeholder="9.00" style="width:52px" oninput="updateEntry(0,'start',this.value)">
+      <input type="text" value="11.00" placeholder="10.00" style="width:52px" oninput="updateEntry(0,'end',this.value)">
+      <input type="text" value="AML" placeholder="Code" style="width:72px" oninput="updateEntry(0,'code_name',this.value)">
+      <input type="text" value="Applied Machine Learning" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(0,'name',this.value)">
+      <input type="text" value="S.310 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(0,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(0,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(0,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(0,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(0)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(1,'day',parseInt(this.value))">
+        <option value="1" selected="">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="11.00" placeholder="9.00" style="width:52px" oninput="updateEntry(1,'start',this.value)">
+      <input type="text" value="13.00" placeholder="10.00" style="width:52px" oninput="updateEntry(1,'end',this.value)">
+      <input type="text" value="CCD" placeholder="Code" style="width:72px" oninput="updateEntry(1,'code_name',this.value)">
+      <input type="text" value="Cloud Computing Development" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(1,'name',this.value)">
+      <input type="text" value="S.310 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(1,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(1,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(1,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(1,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(1)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(2,'day',parseInt(this.value))">
+        <option value="1" selected="">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="13.00" placeholder="9.00" style="width:52px" oninput="updateEntry(2,'start',this.value)">
+      <input type="text" value="14.00" placeholder="10.00" style="width:52px" oninput="updateEntry(2,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(2,'code_name',this.value)">
+      <input type="text" value="🍽 Lunch" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(2,'name',this.value)">
+      <input type="text" value="" placeholder="Room" style="width:110px" oninput="updateEntry(2,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" checked="" onchange="updateEntry(2,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(2,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(2,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(2)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(3,'day',parseInt(this.value))">
+        <option value="1" selected="">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="14.00" placeholder="9.00" style="width:52px" oninput="updateEntry(3,'start',this.value)">
+      <input type="text" value="16.00" placeholder="10.00" style="width:52px" oninput="updateEntry(3,'end',this.value)">
+      <input type="text" value="DEP" placeholder="Code" style="width:72px" oninput="updateEntry(3,'code_name',this.value)">
+      <input type="text" value="Data Engineering Project" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(3,'name',this.value)">
+      <input type="text" value="S.130A SEG" placeholder="Room" style="width:110px" oninput="updateEntry(3,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(3,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(3,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(3,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(3)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(4,'day',parseInt(this.value))">
+        <option value="1" selected="">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="16.00" placeholder="9.00" style="width:52px" oninput="updateEntry(4,'start',this.value)">
+      <input type="text" value="18.00" placeholder="10.00" style="width:52px" oninput="updateEntry(4,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(4,'code_name',this.value)">
+      <input type="text" value="Gym" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(4,'name',this.value)">
+      <input type="text" value="T-Junction" placeholder="Room" style="width:110px" oninput="updateEntry(4,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(4,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(4,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(4,'category',this.value)">
+        <option value="class">🎓 Class</option>
+        <option value="free" selected="">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(4)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(5,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="10.00" placeholder="9.00" style="width:52px" oninput="updateEntry(5,'start',this.value)">
+      <input type="text" value="13.00" placeholder="10.00" style="width:52px" oninput="updateEntry(5,'end',this.value)">
+      <input type="text" value="DPV" placeholder="Code" style="width:72px" oninput="updateEntry(5,'code_name',this.value)">
+      <input type="text" value="Data Prep &amp; Visualisation" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(5,'name',this.value)">
+      <input type="text" value="S.310 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(5,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(5,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(5,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(5,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(5)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(6,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="13.00" placeholder="9.00" style="width:52px" oninput="updateEntry(6,'start',this.value)">
+      <input type="text" value="15.00" placeholder="10.00" style="width:52px" oninput="updateEntry(6,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(6,'code_name',this.value)">
+      <input type="text" value="🍽 Lunch" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(6,'name',this.value)">
+      <input type="text" value="" placeholder="Room" style="width:110px" oninput="updateEntry(6,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" checked="" onchange="updateEntry(6,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(6,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(6,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(6)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(7,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="13.00" placeholder="9.00" style="width:52px" oninput="updateEntry(7,'start',this.value)">
+      <input type="text" value="14.00" placeholder="10.00" style="width:52px" oninput="updateEntry(7,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(7,'code_name',this.value)">
+      <input type="text" value="Gym" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(7,'name',this.value)">
+      <input type="text" value="T-Junction" placeholder="Room" style="width:110px" oninput="updateEntry(7,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(7,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(7,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(7,'category',this.value)">
+        <option value="class">🎓 Class</option>
+        <option value="free" selected="">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(7)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(8,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="15.00" placeholder="9.00" style="width:52px" oninput="updateEntry(8,'start',this.value)">
+      <input type="text" value="16.00" placeholder="10.00" style="width:52px" oninput="updateEntry(8,'end',this.value)">
+      <input type="text" value="DXX212" placeholder="Code" style="width:72px" oninput="updateEntry(8,'code_name',this.value)">
+      <input type="text" value="Visual Arts Appreciation" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(8,'name',this.value)">
+      <input type="text" value="N1.813 SDM" placeholder="Room" style="width:110px" oninput="updateEntry(8,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(8,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(8,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(8,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(8)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(9,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="16.00" placeholder="9.00" style="width:52px" oninput="updateEntry(9,'start',this.value)">
+      <input type="text" value="17.00" placeholder="10.00" style="width:52px" oninput="updateEntry(9,'end',this.value)">
+      <input type="text" value="DXX208" placeholder="Code" style="width:72px" oninput="updateEntry(9,'code_name',this.value)">
+      <input type="text" value="Elements of Interior Design" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(9,'name',this.value)">
+      <input type="text" value="M.406 SDM" placeholder="Room" style="width:110px" oninput="updateEntry(9,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(9,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(9,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(9,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(9)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(10,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2" selected="">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="17.00" placeholder="9.00" style="width:52px" oninput="updateEntry(10,'start',this.value)">
+      <input type="text" value="18.00" placeholder="10.00" style="width:52px" oninput="updateEntry(10,'end',this.value)">
+      <input type="text" value="BMX212" placeholder="Code" style="width:72px" oninput="updateEntry(10,'code_name',this.value)">
+      <input type="text" value="Understanding Contracts &amp; the Law" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(10,'name',this.value)">
+      <input type="text" value="LTD-5 SBM" placeholder="Room" style="width:110px" oninput="updateEntry(10,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(10,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(10,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(10,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(10)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(11,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3" selected="">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="10.00" placeholder="9.00" style="width:52px" oninput="updateEntry(11,'start',this.value)">
+      <input type="text" value="11.00" placeholder="10.00" style="width:52px" oninput="updateEntry(11,'end',this.value)">
+      <input type="text" value="PEM (Even)" placeholder="Code" style="width:72px" oninput="updateEntry(11,'code_name',this.value)">
+      <input type="text" value="Homeroom" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(11,'name',this.value)">
+      <input type="text" value="S.310 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(11,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(11,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(11,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(11,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(11)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(12,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3" selected="">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="11.00" placeholder="9.00" style="width:52px" oninput="updateEntry(12,'start',this.value)">
+      <input type="text" value="13.00" placeholder="10.00" style="width:52px" oninput="updateEntry(12,'end',this.value)">
+      <input type="text" value="AML" placeholder="Code" style="width:72px" oninput="updateEntry(12,'code_name',this.value)">
+      <input type="text" value="Applied Machine Learning" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(12,'name',this.value)">
+      <input type="text" value="S.310 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(12,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(12,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(12,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(12,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(12)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(13,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3" selected="">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="13.00" placeholder="9.00" style="width:52px" oninput="updateEntry(13,'start',this.value)">
+      <input type="text" value="14.00" placeholder="10.00" style="width:52px" oninput="updateEntry(13,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(13,'code_name',this.value)">
+      <input type="text" value="🍽 Lunch" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(13,'name',this.value)">
+      <input type="text" value="" placeholder="Room" style="width:110px" oninput="updateEntry(13,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" checked="" onchange="updateEntry(13,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(13,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(13,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(13)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(14,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3" selected="">Wed</option><option value="4">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="14.00" placeholder="9.00" style="width:52px" oninput="updateEntry(14,'start',this.value)">
+      <input type="text" value="16.00" placeholder="10.00" style="width:52px" oninput="updateEntry(14,'end',this.value)">
+      <input type="text" value="DSM" placeholder="Code" style="width:72px" oninput="updateEntry(14,'code_name',this.value)">
+      <input type="text" value="Data Security &amp; Management" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(14,'name',this.value)">
+      <input type="text" value="S.342 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(14,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(14,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(14,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(14,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(14)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(15,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4" selected="">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="10.00" placeholder="9.00" style="width:52px" oninput="updateEntry(15,'start',this.value)">
+      <input type="text" value="12.00" placeholder="10.00" style="width:52px" oninput="updateEntry(15,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(15,'code_name',this.value)">
+      <input type="text" value="Gym" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(15,'name',this.value)">
+      <input type="text" value="T-Junction" placeholder="Room" style="width:110px" oninput="updateEntry(15,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(15,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(15,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(15,'category',this.value)">
+        <option value="class">🎓 Class</option>
+        <option value="free" selected="">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(15)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(16,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4" selected="">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="12.00" placeholder="9.00" style="width:52px" oninput="updateEntry(16,'start',this.value)">
+      <input type="text" value="13.00" placeholder="10.00" style="width:52px" oninput="updateEntry(16,'end',this.value)">
+      <input type="text" value="" placeholder="Code" style="width:72px" oninput="updateEntry(16,'code_name',this.value)">
+      <input type="text" value="🍽 Lunch" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(16,'name',this.value)">
+      <input type="text" value="" placeholder="Room" style="width:110px" oninput="updateEntry(16,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" checked="" onchange="updateEntry(16,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(16,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(16,'category',this.value)">
+        <option value="class">🎓 Class</option>
+        <option value="free" selected="">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(16)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(17,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4" selected="">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="13.00" placeholder="9.00" style="width:52px" oninput="updateEntry(17,'start',this.value)">
+      <input type="text" value="15.00" placeholder="10.00" style="width:52px" oninput="updateEntry(17,'end',this.value)">
+      <input type="text" value="ICSD" placeholder="Code" style="width:72px" oninput="updateEntry(17,'code_name',this.value)">
+      <input type="text" value="Intelligent Control System Dev" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(17,'name',this.value)">
+      <input type="text" value="R.412 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(17,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(17,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(17,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(17,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(17)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(18,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4" selected="">Thu</option><option value="5">Fri</option>
+      </select>
+      <input type="text" value="15.00" placeholder="9.00" style="width:52px" oninput="updateEntry(18,'start',this.value)">
+      <input type="text" value="17.00" placeholder="10.00" style="width:52px" oninput="updateEntry(18,'end',this.value)">
+      <input type="text" value="SDCA" placeholder="Code" style="width:72px" oninput="updateEntry(18,'code_name',this.value)">
+      <input type="text" value="Sensor Data Collection &amp; Analysis" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(18,'name',this.value)">
+      <input type="text" value="S.373 SEG" placeholder="Room" style="width:110px" oninput="updateEntry(18,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(18,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" onchange="updateEntry(18,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(18,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(18)">✕</button>
+    </div><div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(19,'day',parseInt(this.value))">
+        <option value="1">Mon</option><option value="2">Tue</option><option value="3">Wed</option><option value="4">Thu</option><option value="5" selected="">Fri</option>
+      </select>
+      <input type="text" value="9.00" placeholder="9.00" style="width:52px" oninput="updateEntry(19,'start',this.value)">
+      <input type="text" value="10.00" placeholder="10.00" style="width:52px" oninput="updateEntry(19,'end',this.value)">
+      <input type="text" value="DPV" placeholder="Code" style="width:72px" oninput="updateEntry(19,'code_name',this.value)">
+      <input type="text" value="Data Prep &amp; Visualisation" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(19,'name',this.value)">
+      <input type="text" value="E-Learning" placeholder="Room" style="width:110px" oninput="updateEntry(19,'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" onchange="updateEntry(19,'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" checked="" onchange="updateEntry(19,'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(19,'category',this.value)">
+        <option value="class" selected="">🎓 Class</option>
+        <option value="free">🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(19)">✕</button>
+    </div></div>
+    </div><!-- /entries scroll wrapper -->
+    <button class="add-entry-btn" onclick="addEntry()">+ Add Entry</button>
 
-</body>
+    <!-- Footer -->
+    <div style="display:flex;gap:8px;align-items:center;margin-top:16px;border-top:0.5px solid #eee;padding-top:14px;">
+      <button id="edit-delete-btn" class="danger-btn" onclick="deletePerson()" style="display: inline-flex;">Remove Person</button>
+      <div style="flex:1"></div>
+      <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+      <button id="edit-save-btn" class="save-btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!--      EVENTS MODAL -->
+<div id="events-modal" class="modal-overlay" onclick="if(event.target===this)closeEventsModal()" style="display: none;">
+  <div class="modal-box" style="max-width:600px;">
+    <div class="modal-header">
+      <span class="modal-title">📅 Events</span>
+      <button class="modal-close" onclick="closeEventsModal()">✕</button>
+    </div>
+    <div id="events-list"></div>
+    <div class="events-add-form">
+      <div class="section-label" style="margin-top:0;margin-bottom:10px;">Add New Event</div>
+      <div class="form-row" style="margin-bottom:10px;">
+        <div class="form-group" style="flex:1;">
+          <label>Title</label>
+          <input id="ev-title" class="form-input" type="text" placeholder="e.g. Assignment Due" style="width:100%">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input id="ev-date" class="form-input" type="date">
+        </div>
+        <div class="form-group">
+          <label>Colour</label>
+          <input id="ev-colour" class="form-input" type="color" value="#0C447C" style="width:52px;padding:3px;height:33px;">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Note (optional)</label>
+        <input id="ev-note" class="form-input" type="text" placeholder="Any extra info..." style="width:100%">
+      </div>
+      <button class="save-btn" style="width:100%;" onclick="addEvent()">Add Event</button>
+    </div>
+  </div>
+</div>
+
+<!--      SERVER SYNC MODAL -->
+<div id="server-modal" class="modal-overlay" onclick="if(event.target===this)closeServerModal()" style="display: none;">
+  <div class="modal-box" style="max-width:480px;">
+    <div class="modal-header">
+      <span class="modal-title">🔗 Auto-Save Server Settings</span>
+      <button class="modal-close" onclick="closeServerModal()">✕</button>
+    </div>
+    <p style="font-size:11px;color:#888;margin-bottom:14px;line-height:1.6;">
+      After every edit the timetable is automatically saved to your Python server so the live site updates instantly.<br>
+      Your token is only stored in this browser's localStorage.
+    </p>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Server URL</label>
+      <input id="srv-url" class="form-input" type="text" placeholder="https://yourname.pythonanywhere.com" style="width:100%">
+    </div>
+    <div class="form-group" style="margin-bottom:10px;">
+      <label>Save Token (the secret you set in the server)</label>
+      <input id="srv-token" class="form-input" type="password" placeholder="your-secret-token" style="width:100%">
+    </div>
+    <div id="srv-test-result" style="display: block; background: rgb(232, 245, 233); color: rgb(46, 125, 50); font-size: 11px; padding: 8px 10px; border-radius: 6px; margin-bottom: 10px;">✓ Connected — server is reachable and the token is correct!</div>
+    <div style="display:flex;gap:8px;align-items:center;border-top:0.5px solid #eee;padding-top:14px;">
+      <button id="srv-test-btn" class="cancel-btn" onclick="testServerConnection()" style="background:#f0f6ff;border-color:#d0e4f8;color:#0C447C;">Test Connection</button>
+      <div style="flex:1"></div>
+      <button class="cancel-btn" onclick="closeServerModal()">Cancel</button>
+      <button class="save-btn" onclick="saveServerConfig()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!--      MAIN VIEW -->
+<div id="main-view" style="padding:0.5rem 0">
+
+  <div class="toolbar">
+    <div class="tabs" id="list_names"><div class="tab active" onclick="updateButton(this)">All</div><div class="tab-group">
+      <div class="tab active" onclick="updateButton(this)"><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:20px;height:20px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">Charles</div>
+      <div class="sub-tabs">
+        <div class="sub-tab active" onclick="toggleCategory('Charles','class',this)">🎓 Class</div>
+        <div class="sub-tab active" onclick="toggleCategory('Charles','free',this)">🎮 Free Time</div>
+      </div>
+    </div></div>
+    <div class="exports">
+      <button class="btn" onclick="openEditModal()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3L11 2z"></path><path d="M9 4l3 3"></path></svg>Edit
+      </button>
+      <button class="btn btn-add" onclick="openAddPersonModal()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="6" r="3"></circle><path d="M1 14c0-3 2.7-5 6-5"></path><path d="M12 10v4M10 12h4"></path></svg>Add Person
+      </button>
+      <button class="btn" onclick="exportAsPage()" style="background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32;" title="Download updated HTML to upload to your site">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3"></path><rect x="2" y="11" width="12" height="3" rx="1"></rect></svg>Export Page
+      </button>
+      <button class="btn" onclick="exportPNG()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="10" rx="1"></rect><path d="M2 9l3-3 3 3 2-2 4 3"></path><circle cx="11" cy="5" r="1" fill="currentColor" stroke="none"></circle></svg>PNG
+      </button>
+      <button class="btn" onclick="exportPDF()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1"></rect><path d="M5 5h6M5 8h6M5 11h4"></path></svg>PDF
+      </button>
+      <button class="btn" onclick="openEventsModal()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"></rect><path d="M5 1v3M11 1v3M2 6h12"></path><path d="M5 9h1M8 9h1M11 9h1M5 12h1M8 12h1"></path></svg>Events
+      </button>
+      <button class="btn" onclick="goToPlaceholder()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"></rect><path d="M5 8h6M8 5v6"></path></svg>Placeholder
+      </button>
+      <button class="btn" onclick="openServerModal()" title="Configure auto-save server">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="4" rx="1"></rect><rect x="1" y="10" width="14" height="4" rx="1"></rect><circle cx="13" cy="4" r="0.8" fill="currentColor" stroke="none"></circle><circle cx="13" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg>Server
+      </button>
+      <span id="gh-status-badge" class="gh-status-badge gh-saving" style="display: none;" onclick="openServerModal()" title="Click to open server settings">Saving…</span>
+      <button class="btn" id="darkmode-btn" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1z"></path><path d="M8 1c-1.5 2-1.5 10 0 14"></path><path d="M1 8h14"></path></svg><span id="darkmode-label">Light</span>
+      </button>
+      <button class="btn" onclick="resetToDefaults()" title="Clear all edits and restore original data" style="color:#999;">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 0 1.5-4L2 2v4h4"></path></svg>Reset
+      </button>
+      <span id="status"></span>
+    </div>
+  </div>
+
+  <div id="capture-area">
+    <div class="legend-row" id="list_colour"><span class="leg" style="background:#5c142e;color:#a2ccf6;">Charles (AI And Data)</span></div>
+    <div class="view active" id="view-all">
+      <div style="overflow-x:auto"><table>
+        <thead>
+          <tr>
+            <th class="tc">Time</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+          </tr>
+        </thead>
+        <tbody id="timetable"><tr><td class="tc">9:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · AML</span>Applied Machine Learning · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td><td></td><td></td><td><span class="bl el" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DPV</span>Data Prep &amp; Visualisation <span style="opacity:0.7">(E-Learning)</span></span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td></tr><tr><td class="tc">10:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · AML</span>Applied Machine Learning · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DPV</span>Data Prep &amp; Visualisation · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · PEM (Even)</span>Homeroom · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#412f2f;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · </span>Gym · T-Junction</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">11:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · CCD</span>Cloud Computing Development · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DPV</span>Data Prep &amp; Visualisation · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · AML</span>Applied Machine Learning · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#412f2f;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · </span>Gym · T-Junction</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">12:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · CCD</span>Cloud Computing Development · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DPV</span>Data Prep &amp; Visualisation · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · AML</span>Applied Machine Learning · S.310 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#2a2a2a;color:#777"><span class="nm">Charles</span>🍽 Lunch</span></td><td></td></tr><tr><td class="tc">13:00</td><td><span class="bl" style="background:#2a2a2a;color:#777"><span class="nm">Charles</span>🍽 Lunch</span></td><td><span class="bl" style="background:#412f2f;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · </span>Gym · T-Junction</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span><span class="bl" style="background:#2a2a2a;color:#777"><span class="nm">Charles</span>🍽 Lunch</span></td><td><span class="bl" style="background:#2a2a2a;color:#777"><span class="nm">Charles</span>🍽 Lunch</span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · ICSD</span>Intelligent Control System Dev · R.412 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">14:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DEP</span>Data Engineering Project · S.130A SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#2a2a2a;color:#777"><span class="nm">Charles</span>🍽 Lunch</span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DSM</span>Data Security &amp; Management · S.342 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · ICSD</span>Intelligent Control System Dev · R.412 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">15:00</td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DEP</span>Data Engineering Project · S.130A SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DXX212</span>Visual Arts Appreciation · N1.813 SDM</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DSM</span>Data Security &amp; Management · S.342 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">16:00</td><td><span class="bl" style="background:#412f2f;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · </span>Gym · T-Junction</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · DXX208</span>Elements of Interior Design · M.406 SDM</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · SDCA</span>Sensor Data Collection &amp; Analysis · S.373 SEG</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td></tr><tr><td class="tc">17:00</td><td><span class="bl" style="background:#412f2f;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · </span>Gym · T-Junction</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzk.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td><span class="bl" style="background:#5c142e;color:#a2ccf6;;display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">Charles · BMX212</span>Understanding Contracts &amp; the Law · LTD-5 SBM</span><img src="https://raw.githubusercontent.com/breadmasarap/Scuffed-Timetable/refs/heads/main/mzkchibi.png" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;"></span></td><td></td><td></td><td></td></tr></tbody>
+      </table></div>
+      <p class="note">Site made by Catsium, Sampleless, Emzoul and Zathral</p>
+    </div>
+  </div>
+</div>
+
+<!--      PLACEHOLDER PAGE -->
+<div id="placeholder-page">
+  <div class="ph-header">
+    <button class="ph-back-btn" onclick="goBack()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"></path></svg>
+      Back to Timetable
+    </button>
+    <span class="ph-page-title">Placeholder Page</span>
+  </div>
+  <div class="ph-content">
+    <div class="ph-placeholder-text">
+      <p>Placeholder</p>
+      <span>This page is reserved for future content.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Save-to-file banner -->
+<div id="save-file-bar" class="">
+  <span id="sfb-msg">You have unsaved changes — save them back to the HTML file.</span>
+  <button id="sfb-save" onclick="saveToFile()">💾 Save to file</button>
+  <button id="sfb-dismiss" onclick="dismissSaveBar()">Dismiss</button>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script>
-// set visibility
-for (let username in data.users) {
-    data.users[username].visibility = true;
+// Persistence: save/load data to localStorage
+const STORAGE_KEY = 'scuffed_timetable_data';
+
+// File System Access API: save back to the opened HTML file
+let fileHandle = null; // FileSystemFileHandle, if the user granted access
+
+// Try to re-acquire the handle from IndexedDB across page reloads
+(async () => {
+  try {
+    const db = await openIDB();
+    const stored = await idbGet(db, 'fileHandle');
+    if (stored) {
+      // Verify we still have permission (may need re-prompt)
+      const perm = await stored.queryPermission({ mode: 'readwrite' });
+      if (perm === 'granted') fileHandle = stored;
+      // If not granted we'll ask again on first save
+    }
+  } catch(e) {}
+})();
+
+function openIDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('scuffed_timetable_fsa', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('kv');
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e);
+  });
+}
+function idbGet(db, key) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction('kv', 'readonly');
+    const req = tx.objectStore('kv').get(key);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e);
+  });
+}
+function idbSet(db, key, val) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction('kv', 'readwrite');
+    tx.objectStore('kv').put(val, key);
+    tx.oncomplete = () => res();
+    tx.onerror    = e => rej(e);
+  });
 }
 
-// put names inside toolbar
-function updateToolbar() {
-    // all button
-    let name_html = `<div class = "tab active" onclick = updateButton(this) >All</div>`;
-
-    // rest of users
-    for (let username in data.users) {
-        name_html += `<div class = "tab active" onclick = updateButton(this)> ${username} </div>`;
-    };
-    document.getElementById("list_names").innerHTML = name_html;
+// Show / hide the unsaved-changes banner
+let bannerDismissed = false;
+let pageReady = false; // prevents banner from firing during startup init
+function markUnsaved() {
+  if (!pageReady || bannerDismissed) return;
+  document.getElementById('save-file-bar').classList.add('visible');
+}
+function dismissSaveBar() {
+  bannerDismissed = true;
+  document.getElementById('save-file-bar').classList.remove('visible');
 }
 
-// colour coding
-function updateColour() {
-    let legend_html = ` `
-    for (let username in data.users) {
-        const user = data.users[username]
-        if (data.users[username].visibility == true) {
-            legend_html += `<span class = "leg" style = "background: ${user.background_colour}; color: ${user.colour}">${username} (${user.code})</span>`;
-        }
-    };
-    document.getElementById("list_colour").innerHTML = legend_html;
-}
+async function saveToFile() {
+  const btn = document.getElementById('sfb-save');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
 
-// display timetable
-function updateTimetable() {
-    let timetable_html = ` `
-    let start = 0
-    let end = 0
-    for (let username in data.users) {
-        const user = data.users[username]
-        for (let day_index in data.users[username]["timetable"]) {
-            const day = data.users[username]["timetable"][day_index]
-            if ((start == 0 || start > parseInt(day.start, 10)) && data.users[username].visibility == true) {
-                start = parseInt(day.start, 10)
-            }
-            if ((end == 0 || end < parseInt(day.end, 10)) && data.users[username].visibility == true) {
-                end = parseInt(day.end, 10)
-            }
-        }
+  try {
+    // 1. Ask the user to pick a file if we don't have a handle yet
+    if (!fileHandle || (await fileHandle.queryPermission({ mode: 'readwrite' })) !== 'granted') {
+      if (!('showSaveFilePicker' in window)) {
+        // Fallback: trigger download
+        downloadFallback();
+        btn.textContent = '💾 Save to file';
+        btn.disabled = false;
+        return;
+      }
+      fileHandle = await window.showSaveFilePicker({
+        suggestedName: 'timetable.html',
+        types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }]
+      });
+      // Persist handle so we don't need to prompt again
+      const db = await openIDB();
+      await idbSet(db, 'fileHandle', fileHandle);
     }
 
-    // for loop for hours
-    for (let i = start; i < end; i++) {
-        timetable_html += `<tr> <td class="tc">${i}:00</td> `
+    // 2. Build the HTML to write
+    const html = snapshotPage();
 
-        // for loop for days
-        for (let j = 1; j <= 5; j++) {
+    // 3. Write to the file
+    const writable = await fileHandle.createWritable();
+    await writable.write(html);
+    await writable.close();
 
-
-            timetable_html += `<td>`
-            lunch_html = ``
-
-            // for loop for users
-            for (let username in data.users) {
-                const user = data.users[username] 
-
-                // check each lesson a user has
-                for (let day_index in data.users[username]["timetable"]) {
-                    const day = data.users[username]["timetable"][day_index]
-
-                    // check if lesson merges with hour and day
-                    if (parseInt(day.start, 10) <= i && parseInt(day.end, 10) > i && day.day == j && data.users[username].visibility == true) {
-                        
-                        // lunch
-                        if (day.break == true) {
-
-                            // add commas between names
-                            if (lunch_html != ``) {
-                                lunch_html += `, `
-                            }
-
-                            lunch_html += ` ${username}`
-                        
-                        // e learning
-                        } else if (day.online == true) {
-                            timetable_html += `<span class="bl el" style = "background: ${user.background_colour}; color: ${user.colour}"><span class="nm">${username} · ${day.code_name}</span>${day.name} (${day.classroom})</span>`
-                        
-                        // regular
-                        } else {
-                            timetable_html += `<span class="bl" style = "background: ${user.background_colour}; color: ${user.colour}"><span class="nm">${username} · ${day.code_name}</span>${day.name} · ${day.classroom}</span>`
-                        }
-                    }
-                }
-            }
-
-            // check if lunch is there
-            if (lunch_html != ``) {
-                timetable_html += `<span class="bl" style = "background: #F0F0F0; color: #999"><span class="nm">`
-                lunch_html += `</span>🍽 Lunch</span>`
-                timetable_html += lunch_html
-            }
-            timetable_html += `</td>`
-        }
-        timetable_html += `</tr>`
-    }
-    document.getElementById("timetable").innerHTML = timetable_html;
-}
-
-// display certain users
-function updateButton(button) {
-    let username = button.textContent.trim()
-    if (username == "All") {
-        if (button.classList.contains('active')) {
-            document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-            for (let userdata in data.users) {
-                data.users[userdata].visibility = false;
-            }
-                
-        } else {
-            document.querySelectorAll('.tab').forEach(t=>t.classList.add('active'));
-            for (let userdata in data.users) {
-                data.users[userdata].visibility = true;
-            }
-
-        }
+    // 4. Update banner
+    document.getElementById('sfb-msg').textContent = '✓ Saved to file!';
+    setTimeout(() => {
+      document.getElementById('sfb-msg').textContent = 'You have unsaved changes — save them back to the HTML file.';
+      document.getElementById('save-file-bar').classList.remove('visible');
+      bannerDismissed = false;
+    }, 2000);
+  } catch(e) {
+    if (e.name === 'AbortError') {
+      // User cancelled the picker — do nothing
     } else {
-        const all_usernames = document.querySelectorAll('#list_names .tab');
-        const all_button = Array.from(all_usernames).find(btn => btn.textContent.trim() === 'All');
+      // Fallback to download on any other error
+      downloadFallback();
+    }
+  }
 
-        
-        if (button.classList.contains('active')) {
-            button.classList.remove('active');
-            all_button.classList.remove('active');
-            for (let userdata in data.users) {
-                if (username == userdata) {
-                    data.users[userdata].visibility = false;
-                }
+  btn.textContent = '💾 Save to file';
+  btn.disabled = false;
+}
+
+function downloadFallback() {
+  const html = snapshotPage();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.download = 'timetable.html';
+  a.href = URL.createObjectURL(blob);
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  document.getElementById('sfb-msg').textContent = '✓ Downloaded (replace your file with this one)';
+  setTimeout(() => {
+    document.getElementById('sfb-msg').textContent = 'You have unsaved changes — save them back to the HTML file.';
+    document.getElementById('save-file-bar').classList.remove('visible');
+    bannerDismissed = false;
+  }, 4000);
+}
+
+function saveDataToStorage() {
+  try {
+    const exportUsers = {};
+    for (const u in data.users) {
+      const { visibility, catVisibility, ...rest } = data.users[u];
+      exportUsers[u] = rest;
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(exportUsers));
+  } catch(e) {}
+  // Notify the user that unsaved changes exist
+  markUnsaved();
+}
+
+function loadDataFromStorage() {
+  // IMPORTANT: localStorage only updates users that already exist in data.users.
+  // It can NEVER add or resurrect users that were removed from the data block.
+  // The data block in this file is always the ground truth for who exists,
+  // INCLUDING the timetable entries — localStorage only restores display
+  // preferences (colours, avatar, font, code) so stale localStorage data
+  // can never hide blocks that are defined in the HTML.
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    const PREF_KEYS = ['colour', 'background_colour', 'free_colour', 'avatar', 'free_avatar', 'code', 'font_url', 'font_size'];
+    for (const u in saved) {
+      if (!(u in data.users)) continue; // never add new users from storage
+      for (const k of PREF_KEYS) {
+        if (k in saved[u]) data.users[u][k] = saved[u][k];
+      }
+    }
+    // Remove users deleted from data block (not in HTML data anymore)
+    for (const u in data.users) {
+      if (!(u in saved)) delete data.users[u];
+    }
+  } catch(e) {}
+}
+
+// Visibility init (run after storage load)
+loadDataFromStorage();
+for (let u in data.users) data.users[u].visibility = true;
+
+// ---
+// Font loading
+// ---
+const loadedFonts = {}; // username -> CSS font-family name currently loaded
+
+function fontFamilyName(username) {
+  return 'uf-' + username.replace(/[^a-zA-Z0-9]/g, '-');
+}
+
+async function loadUserFont(username, fontUrl) {
+  if (!fontUrl) {
+    delete loadedFonts[username];
+    return;
+  }
+  const family = fontFamilyName(username);
+  try {
+    const face = new FontFace(family, `url("${fontUrl}")`);
+    await face.load();
+    document.fonts.add(face);
+    loadedFonts[username] = family;
+  } catch(e) {
+    console.warn(`Font load failed for ${username}:`, e.message);
+    delete loadedFonts[username];
+  }
+}
+
+async function loadAllFonts() {
+  const tasks = [];
+  for (const u in data.users) {
+    if (data.users[u].font_url) tasks.push(loadUserFont(u, data.users[u].font_url));
+  }
+  if (tasks.length) await Promise.all(tasks);
+}
+
+// Font UI in edit modal
+async function testFont() {
+  const url  = document.getElementById('edit-font-url').value.trim();
+  const btn  = document.getElementById('font-test-btn');
+  const area = document.getElementById('font-preview-area');
+  const samp = document.getElementById('font-preview-sample');
+  const stat = document.getElementById('font-preview-status');
+
+  if (!url) { area.style.display = 'none'; return; }
+
+  btn.textContent = 'Loading…';
+  btn.disabled = true;
+
+  const tempFamily = 'preview-font-modal';
+  try {
+    const face = new FontFace(tempFamily, `url("${url}")`);
+    await face.load();
+    // Replace any old preview face
+    document.fonts.forEach(f => { if (f.family === tempFamily) document.fonts.delete(f); });
+    document.fonts.add(face);
+
+    const name = document.getElementById('edit-username').value.trim() || 'Person';
+    const fg   = document.getElementById('edit-colour').value;
+    const bg   = document.getElementById('edit-bg-colour').value;
+
+    const previewSize = parseInt(document.getElementById('edit-font-size').value, 10) || 10;
+    samp.style.fontFamily = `'${tempFamily}', sans-serif`;
+    samp.style.fontSize   = previewSize + 'px';
+    samp.innerHTML = `<span style="background:${bg};color:${fg};padding:3px 8px;border-radius:4px;display:inline-block;">`
+      + `${htmlEsc(name)} · The quick brown fox jumps over the lazy dog · 0123456789</span>`;
+    stat.style.color = '#2a7a2a';
+    stat.textContent = 'Font loaded successfully — click Save Changes to apply.';
+  } catch(e) {
+    samp.innerHTML = '';
+    stat.style.color = '#c00';
+    stat.textContent = 'Could not load font. Make sure the URL points directly to a .ttf or .woff2 file and allows cross-origin access.';
+  }
+
+  area.style.display = 'block';
+  btn.textContent = 'Test Font';
+  btn.disabled = false;
+}
+
+// Avatar preview in edit modal
+// Updates the small circular preview image as the user types/pastes a URL.
+function previewAvatar(url) {
+  const img = document.getElementById('edit-avatar-preview');
+  if (url && url.startsWith('http')) {
+    img.src = url;
+    img.style.display = 'block';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
+}
+
+function previewFreeAvatar(url) {
+  const img = document.getElementById('edit-free-avatar-preview');
+  if (url && url.startsWith('http')) {
+    img.src = url;
+    img.style.display = 'block';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
+}
+
+function clearFont() {
+  document.getElementById('edit-font-url').value = '';
+  document.getElementById('font-preview-area').style.display = 'none';
+  document.getElementById('font-active-badge').style.display = 'none';
+}
+
+// ---
+// Toolbar setup
+// ---
+function updateToolbar() {
+  // Init catVisibility for each user if not set
+  for (let u in data.users) {
+    if (!data.users[u].catVisibility) data.users[u].catVisibility = { class: true, free: true };
+  }
+  let html = `<div class="tab active" onclick="updateButton(this)">All</div>`;
+  for (let u in data.users) {
+    const av = data.users[u].avatar;
+    const img = av
+      ? `<img src="${av}" style="width:20px;height:20px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:4px;">`
+      : '';
+    const cv = data.users[u].catVisibility;
+    const classActive = (cv && cv.class !== false) ? 'active' : '';
+    const freeActive  = (cv && cv.free  !== false) ? 'active' : '';
+    html += `<div class="tab-group">
+      <div class="tab active" onclick="updateButton(this)">${img}${u}</div>
+      <div class="sub-tabs">
+        <div class="sub-tab ${classActive}" onclick="toggleCategory('${u}','class',this)">🎓 Class</div>
+        <div class="sub-tab ${freeActive}"  onclick="toggleCategory('${u}','free',this)">🎮 Free Time</div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('list_names').innerHTML = html;
+}
+
+// Dark-mode colour adaptation
+function adaptColorDark(hex, type) {
+  if (!hex || !hex.startsWith('#')) return hex;
+  let h = hex.slice(1);
+  if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  if (h.length !== 6) return hex;
+  const r=parseInt(h.slice(0,2),16)/255, g=parseInt(h.slice(2,4),16)/255, b=parseInt(h.slice(4,6),16)/255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let hue=0, sat=0, lit=(max+min)/2;
+  if (max!==min) {
+    const d=max-min;
+    sat=lit>0.5?d/(2-max-min):d/(max+min);
+    if(max===r) hue=((g-b)/d+(g<b?6:0))/6;
+    else if(max===g) hue=((b-r)/d+2)/6;
+    else hue=((r-g)/d+4)/6;
+  }
+  lit = type==='bg' ? 0.22 : 0.80;
+  const q=lit<0.5?lit*(1+sat):lit+sat-lit*sat, p=2*lit-q;
+  const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
+  const [ro,go,bo]=sat===0?[lit,lit,lit]:[hue2rgb(p,q,hue+1/3),hue2rgb(p,q,hue),hue2rgb(p,q,hue-1/3)];
+  return '#'+[ro,go,bo].map(x=>Math.round(x*255).toString(16).padStart(2,'0')).join('');
+}
+
+// Legend
+// Category toggle
+function toggleCategory(username, cat, btn) {
+  if (!data.users[username].catVisibility) data.users[username].catVisibility = { class: true, free: true };
+  const cv = data.users[username].catVisibility;
+  cv[cat] = !btn.classList.contains('active');
+  btn.classList.toggle('active', cv[cat]);
+
+  // If both sub-tabs are now off, untoggle the person's main tab (and vice versa)
+  const bothOff = !cv.class && !cv.free;
+  // Find the person's main tab button
+  const personTab = Array.from(document.querySelectorAll('#list_names .tab-group .tab'))
+    .find(t => {
+      const nameNode = Array.from(t.childNodes).find(n => n.nodeType === 3 && n.textContent.trim());
+      return (nameNode ? nameNode.textContent.trim() : t.textContent.trim()) === username;
+    });
+  if (personTab) {
+    personTab.classList.toggle('active', !bothOff);
+    data.users[username].visibility = !bothOff;
+    // Also keep the All tab in sync
+    const allBtn = document.querySelector('#list_names .tab');
+    const personTabs = Array.from(document.querySelectorAll('#list_names .tab-group .tab'));
+    const allActive = personTabs.every(t => t.classList.contains('active'));
+    allBtn.classList.toggle('active', allActive);
+  }
+
+  renderLegend();
+  renderTable();
+}
+
+function renderLegend() {
+  const dark = document.body.classList.contains('dark');
+  let html = '';
+  for (let u in data.users) {
+    const person = data.users[u];
+    if (!person.visibility) continue;
+    const ff = loadedFonts[u] ? `font-family:'${loadedFonts[u]}',sans-serif;` : '';
+    const fs = person.font_size && person.font_size !== 10 ? `font-size:${person.font_size}px;` : '';
+    const bg = dark ? adaptColorDark(person.background_colour, 'bg') : person.background_colour;
+    const fg = dark ? adaptColorDark(person.colour, 'fg') : person.colour;
+    html += `<span class="leg" style="background:${bg};color:${fg};${ff}${fs}">${u} (${person.code})</span>`;
+  }
+  document.getElementById('list_colour').innerHTML = html;
+}
+
+// Time helpers (supports X.00 and X.30 notation)
+function parseTime(t) {
+  const parts = String(t).split('.');
+  const h = parseInt(parts[0], 10);
+  const m = parseInt(parts[1] || '0', 10);
+  return h + (m >= 30 ? 0.5 : 0);
+}
+function displayTime(t) {
+  const h = Math.floor(t);
+  return t % 1 === 0 ? `${h}:00` : `${h}:30`;
+}
+
+// Timetable
+function hasHalfHourEntries() {
+  for (const u in data.users) {
+    if (!data.users[u].visibility) continue;
+    for (const e of data.users[u].timetable) {
+      if (parseTime(e.start) % 1 !== 0 || parseTime(e.end) % 1 !== 0) return true;
+    }
+  }
+  return false;
+}
+
+function renderTable() {
+  let html = '';
+  let start = 0, end = 0;
+  for (let u in data.users) {
+    if (!data.users[u].visibility) continue;
+    for (let e of data.users[u].timetable) {
+      const s = parseTime(e.start), en = parseTime(e.end);
+      if (start === 0 || s < start) start = s;
+      if (end   === 0 || en > end)  end   = en;
+    }
+  }
+  const dark = document.body.classList.contains('dark');
+  const step = hasHalfHourEntries() ? 0.5 : 1;
+  for (let i = start; i < end; i = Math.round((i + step) * 10) / 10) {
+    html += `<tr><td class="tc">${displayTime(i)}</td>`;
+    for (let j = 1; j <= 5; j++) {
+      html += `<td>`;
+      let lunch = '';
+      for (let u in data.users) {
+        if (!data.users[u].visibility) continue;
+        const person = data.users[u];
+        const ff  = loadedFonts[u] ? `font-family:'${loadedFonts[u]}',sans-serif;` : '';
+        const fs  = person.font_size && person.font_size !== 10 ? `font-size:${person.font_size}px;` : '';
+        const bg  = dark ? adaptColorDark(person.background_colour, 'bg') : person.background_colour;
+        const fg  = dark ? adaptColorDark(person.colour, 'fg') : person.colour;
+        const freeBgRaw = person.free_colour || person.background_colour;
+        const freeBg = dark ? adaptColorDark(freeBgRaw, 'bg') : freeBgRaw;
+        for (let e of person.timetable) {
+          if (parseTime(e.start) <= i && parseTime(e.end) > i && e.day === j) {
+            if (e.break) {
+              // Respect the break entry's own category (defaults to 'class')
+              const cat = e.category || 'class';
+              const catVis = person.catVisibility || {};
+              if (catVis[cat] === false) continue;
+              if (lunch) lunch += ', ';
+              lunch += u;
+            } else {
+              // Category filter: skip if this category is toggled off
+              const cat = e.category || 'class';
+              const catVis = person.catVisibility || {};
+              if (catVis[cat] === false) continue;
+              const blockBg = (cat === 'free') ? freeBg : bg;
+              const avSrc = (cat === 'free' && person.free_avatar) ? person.free_avatar : person.avatar;
+              const avImg = avSrc ? `<img src="${avSrc}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-left:4px;align-self:center;">` : '';
+              const blClass = e.online ? 'bl el' : 'bl';
+              const roomStr = e.online
+                ? `${e.name} <span style="opacity:0.7">(${e.classroom})</span>`
+                : `${e.name} · ${e.classroom}`;
+              html += `<span class="${blClass}" style="background:${blockBg};color:${fg};${ff}${fs};display:flex;justify-content:space-between;align-items:flex-end;"><span><span class="nm">${u} · ${e.code_name}</span>${roomStr}</span>${avImg}</span>`;
             }
-
-        
-        } else {
-            button.classList.add('active');
-            let check = true
-            for (let userdata in data.users) {
-                if (username == userdata) {
-                    data.users[userdata].visibility = true;
-                }
-
-                // checks if all users are enabled
-                if (data.users[userdata].visibility == false) {
-                    check = false
-                }
-            }
-
-            // change all button to true
-            if (check == true) {
-                all_button.classList.add('active');
-            }
-            
+          }
         }
-    }  
-    updateColour()
-    updateTimetable()
-
+      }
+      const lunchBg = dark ? '#2a2a2a' : '#F0F0F0';
+      const lunchFg = dark ? '#777' : '#999';
+      if (lunch) html += `<span class="bl" style="background:${lunchBg};color:${lunchFg}"><span class="nm">${lunch}</span>🍽 Lunch</span>`;
+      html += `</td>`;
+    }
+    html += `</tr>`;
+  }
+  document.getElementById('timetable').innerHTML = html;
 }
 
-// export png
-function setStatus(msg,t){const s=document.getElementById('status');s.textContent=msg;if(t)setTimeout(()=>s.textContent='',t);}
-function exportPNG(){
+// Tab toggle
+function updateButton(btn) {
+  // Only operate on person .tab buttons (inside .tab-group or the All button)
+  const rawText = btn.textContent.trim();
+  // Strip any leading whitespace artifacts; get just the name (text after img)
+  // btn.childNodes: img (optional) + text node
+  const nameNode = Array.from(btn.childNodes).find(n => n.nodeType === 3 && n.textContent.trim());
+  const name = nameNode ? nameNode.textContent.trim() : rawText;
+
+  if (name === 'All') {
+    const active = btn.classList.contains('active');
+    const nowVisible = !active;
+
+    // Toggle ALL person tabs (main tabs)
+    document.querySelectorAll('#list_names .tab').forEach(t => {
+      active ? t.classList.remove('active') : t.classList.add('active');
+    });
+
+    // Also toggle ALL sub-tabs (class / free) to match
+    document.querySelectorAll('#list_names .sub-tab').forEach(t => {
+      active ? t.classList.remove('active') : t.classList.add('active');
+    });
+
+    // Update data visibility and catVisibility for every user
+    for (let u in data.users) {
+      data.users[u].visibility = nowVisible;
+      if (!data.users[u].catVisibility) data.users[u].catVisibility = { class: true, free: true };
+      data.users[u].catVisibility.class = nowVisible;
+      data.users[u].catVisibility.free  = nowVisible;
+    }
+  } else {
+    const allBtn = document.querySelector('#list_names .tab');  // first tab is always All
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      allBtn.classList.remove('active');
+      data.users[name].visibility = false;
+      // Also deactivate sub-tabs visually and in data
+      if (!data.users[name].catVisibility) data.users[name].catVisibility = {};
+      data.users[name].catVisibility.class = false;
+      data.users[name].catVisibility.free  = false;
+      const group = btn.closest('.tab-group');
+      if (group) {
+        group.querySelectorAll('.sub-tab').forEach(st => st.classList.remove('active'));
+      }
+    } else {
+      btn.classList.add('active');
+      data.users[name].visibility = true;
+      // Restore catVisibility so sub-tabs and timetable are back in sync
+      if (!data.users[name].catVisibility) data.users[name].catVisibility = {};
+      data.users[name].catVisibility.class = true;
+      data.users[name].catVisibility.free  = true;
+      // Update sub-tab UI to reflect restored state
+      const group = btn.closest('.tab-group');
+      if (group) {
+        group.querySelectorAll('.sub-tab').forEach(st => st.classList.add('active'));
+      }
+      // Check if all person tabs are active
+      const personTabs = Array.from(document.querySelectorAll('#list_names .tab-group .tab'));
+      if (personTabs.every(t => t.classList.contains('active'))) allBtn.classList.add('active');
+    }
+  }
+  renderLegend();
+  renderTable();
+}
+
+// Page navigation
+function goToPlaceholder() {
+  document.getElementById('main-view').style.display = 'none';
+  document.getElementById('placeholder-page').style.display = 'block';
+}
+function goBack() {
+  document.getElementById('placeholder-page').style.display = 'none';
+  document.getElementById('main-view').style.display = 'block';
+}
+
+// Dark mode
+function toggleDarkMode() {
+  const dark = document.body.classList.toggle('dark');
+  document.getElementById('darkmode-label').textContent = dark ? 'Light' : 'Dark';
+  try { localStorage.setItem('scuffed_dark', dark ? '1' : '0'); } catch(e) {}
+  renderLegend();
+  renderTable();
+}
+
+function loadDarkMode() {
+  if (localStorage.getItem('scuffed_dark') === '1') {
+    document.body.classList.add('dark');
+    const lbl = document.getElementById('darkmode-label');
+    if (lbl) lbl.textContent = 'Light';
+  }
+}
+
+// Status helper
+function setStatus(msg, t) {
+  const s = document.getElementById('status');
+  s.textContent = msg;
+  if (t) setTimeout(() => s.textContent = '', t);
+}
+
+function resetToDefaults() {
+  if (!confirm('Reset all data back to defaults? This will remove any edits, added people, and custom fonts.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  location.reload();
+}
+
+// Export PNG
+function exportPNG() {
   setStatus('Generating...');
-  html2canvas(document.getElementById('capture-area'),{scale:2,backgroundColor:'#ffffff'}).then(c=>{
-    const a=document.createElement('a');a.download='group_schedule.png';a.href=c.toDataURL('image/png');a.click();
-    setStatus('Downloaded!',2500);
-  }).catch(()=>setStatus('Error, try again',2500));
+  html2canvas(document.getElementById('capture-area'), {scale:2, backgroundColor:'#ffffff', useCORS:true, allowTaint:false}).then(c => {
+    const a = document.createElement('a');
+    a.download = 'group_schedule.png';
+    a.href = c.toDataURL('image/png');
+    a.click();
+    setStatus('Downloaded!', 2500);
+  }).catch(() => setStatus('Error, try again', 2500));
 }
 
+// Export Page (bakes current state into a downloadable HTML file)
+function exportAsPage() {
+  // Strip runtime-only 'visibility' flag from users before baking
+  const exportUsers = {};
+  for (const u in data.users) {
+    const { visibility, ...rest } = data.users[u];
+    exportUsers[u] = rest;
+  }
 
-// run all functions
-updateToolbar()
-updateColour()
-updateTimetable()
+  // Reset live DOM state before snapshot so exported file opens cleanly
+  document.body.style.overflow = '';
+  ['edit-modal','events-modal','server-modal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+  // Replace data script content using its id
+  html = html.replace(
+    /(<script[^>]*id="data-script"[^>]*>)([\s\S]*?)(<\/script>)/,
+    `$1\nconst data = ${JSON.stringify({ users: exportUsers }, null, 2)};\n$3`
+  );
+
+  // Bake current events array if any exist
+  if (events.length > 0) {
+    html = html.replace(
+      /let events = \[\];/,
+      `let events = ${JSON.stringify(events)};`
+    );
+  }
+
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.download = 'timetable.html';
+  a.href = URL.createObjectURL(blob);
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setStatus('Page exported!', 2500);
+}
+
+// Export PDF
+function exportPDF() {
+  setStatus('Generating PDF...');
+  html2canvas(document.getElementById('capture-area'), {scale:2, backgroundColor:'#ffffff', useCORS:true, allowTaint:false}).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const mmW = canvas.width  * 25.4 / 192;
+    const mmH = canvas.height * 25.4 / 192;
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: mmW > mmH ? 'l' : 'p', unit: 'mm', format: [mmW, mmH] });
+    pdf.addImage(imgData, 'PNG', 0, 0, mmW, mmH);
+    pdf.save('group_schedule.pdf');
+    setStatus('Downloaded!', 2500);
+  }).catch(e => { console.error(e); setStatus('Error, try again', 2500); });
+}
+
+// ---
+// Server sync
+// ---
+let serverConfig = { url: '', token: '' };
+const SERVER_CFG_KEY = 'scuffed_server_config';
+
+function loadServerConfig() {
+  try {
+    const raw = localStorage.getItem(SERVER_CFG_KEY);
+    if (raw) Object.assign(serverConfig, JSON.parse(raw));
+  } catch(e) {}
+  updateSrvBadge();
+}
+
+function updateSrvBadge() {
+  const badge = document.getElementById('gh-status-badge');
+  if (!badge) return;
+  if (serverConfig.url && serverConfig.token) {
+    badge.style.display = 'inline-flex';
+    setSyncBadge('idle', 'Server: Ready');
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function openServerModal() {
+  document.getElementById('srv-url').value   = serverConfig.url;
+  document.getElementById('srv-token').value = serverConfig.token;
+  document.getElementById('srv-test-result').style.display = 'none';
+  document.getElementById('server-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeServerModal() {
+  document.getElementById('server-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function saveServerConfig() {
+  serverConfig = {
+    url:   document.getElementById('srv-url').value.trim().replace(/\/$/, ''),
+    token: document.getElementById('srv-token').value.trim()
+  };
+  try { localStorage.setItem(SERVER_CFG_KEY, JSON.stringify(serverConfig)); } catch(e) {}
+  updateSrvBadge();
+  closeServerModal();
+}
+
+async function testServerConnection() {
+  const url   = document.getElementById('srv-url').value.trim().replace(/\/$/, '');
+  const token = document.getElementById('srv-token').value.trim();
+  const res   = document.getElementById('srv-test-result');
+  const btn   = document.getElementById('srv-test-btn');
+
+  if (!url || !token) {
+    res.style.cssText = 'display:block;background:#ffebee;color:#c00;font-size:11px;padding:8px 10px;border-radius:6px;margin-bottom:10px;';
+    res.textContent = 'Please fill in both fields before testing.';
+    return;
+  }
+
+  btn.textContent = 'Testing…';
+  btn.disabled = true;
+  try {
+    const r = await fetch(url + '/ping', { headers: { 'X-Save-Token': token } });
+    if (r.ok) {
+      res.style.cssText = 'display:block;background:#e8f5e9;color:#2e7d32;font-size:11px;padding:8px 10px;border-radius:6px;margin-bottom:10px;';
+      res.textContent = '✓ Connected — server is reachable and the token is correct!';
+    } else {
+      res.style.cssText = 'display:block;background:#ffebee;color:#c00;font-size:11px;padding:8px 10px;border-radius:6px;margin-bottom:10px;';
+      res.textContent = `✗ Error ${r.status}: ${r.status === 401 ? 'Wrong token.' : 'Server error — check app.py logs.'}`;
+    }
+  } catch(e) {
+    res.style.cssText = 'display:block;background:#ffebee;color:#c00;font-size:11px;padding:8px 10px;border-radius:6px;margin-bottom:10px;';
+    res.textContent = `✗ Could not reach server: ${e.message}`;
+  }
+  btn.textContent = 'Test Connection';
+  btn.disabled = false;
+}
+
+function setSyncBadge(state, msg) {
+  const badge = document.getElementById('gh-status-badge');
+  if (!badge) return;
+  badge.className = 'gh-status-badge';
+  if (state === 'saving') badge.classList.add('gh-saving');
+  else if (state === 'ok')    badge.classList.add('gh-ok');
+  else if (state === 'error') badge.classList.add('gh-error');
+  badge.textContent = msg;
+  badge.style.display = 'inline-flex';
+}
+
+function snapshotPage() {
+  const exportUsers = {};
+  for (const u in data.users) {
+    const { visibility, ...rest } = data.users[u];
+    exportUsers[u] = rest;
+  }
+  // Reset live DOM state before snapshot
+  document.body.style.overflow = '';
+  ['edit-modal','events-modal','server-modal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Reset save bar to clean hidden state so it never bakes into the saved file
+  const saveBar = document.getElementById('save-file-bar');
+  const saveBtn = document.getElementById('sfb-save');
+  const saveMsg = document.getElementById('sfb-msg');
+  const saveBarWasVisible = saveBar && saveBar.classList.contains('visible');
+  const saveBtnText     = saveBtn ? saveBtn.textContent : '';
+  const saveBtnDisabled = saveBtn ? saveBtn.disabled    : false;
+  const saveMsgText     = saveMsg ? saveMsg.textContent : '';
+  if (saveBar) saveBar.classList.remove('visible');
+  if (saveBtn) { saveBtn.textContent = '\u{1F4BE} Save to file'; saveBtn.disabled = false; }
+  if (saveMsg) saveMsg.textContent = 'You have unsaved changes \u2014 save them back to the HTML file.';
+  let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  // Restore bar state after snapshot
+  if (saveBar && saveBarWasVisible) saveBar.classList.add('visible');
+  if (saveBtn) { saveBtn.textContent = saveBtnText; saveBtn.disabled = saveBtnDisabled; }
+  if (saveMsg) saveMsg.textContent = saveMsgText;
+  html = html.replace(
+    /(<script[^>]*id="data-script"[^>]*>)([\s\S]*?)(<\/script>)/,
+    `$1\nconst data = ${JSON.stringify({ users: exportUsers }, null, 2)};\n$3`
+  );
+  if (events.length > 0) {
+    html = html.replace(/let events = \[\];/, `let events = ${JSON.stringify(events)};`);
+  }
+  return html;
+}
+
+async function pushToGitHub() {
+  const { url, token } = serverConfig;
+  if (!url || !token) return;
+
+  setSyncBadge('saving', 'Saving…');
+  try {
+    const res = await fetch(url + '/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Save-Token': token },
+      body: snapshotPage()
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    setSyncBadge('ok', '✓ Saved');
+    setTimeout(() => updateSrvBadge(), 3000);
+  } catch(e) {
+    setSyncBadge('error', `✗ ${e.message}`);
+    setTimeout(() => updateSrvBadge(), 6000);
+  }
+}
+
+// ---
+// Edit modal
+// ---
+let editMode  = 'edit';
+let editing = { originalUsername:'', username:'', colour:'', background_colour:'', avatar:'', code:'', font_url:'', font_size:10, timetable:[] };
+
+function openEditModal() {
+  if (Object.keys(data.users).length === 0) {
+    alert('No people to edit. Add a person first.');
+    return;
+  }
+  editMode = 'edit';
+  document.getElementById('edit-modal-title').textContent = '✏ Edit Schedule';
+  document.getElementById('edit-selector-row').style.display    = 'flex';
+  document.getElementById('edit-add-preview-row').style.display = 'none';
+  document.getElementById('edit-save-btn').textContent          = 'Save Changes';
+  document.getElementById('edit-delete-btn').style.display      = 'inline-flex';
+
+  const sel = document.getElementById('edit-user-select');
+  sel.innerHTML = '';
+  for (let u in data.users) {
+    const opt = document.createElement('option');
+    opt.value = u; opt.textContent = u;
+    sel.appendChild(opt);
+  }
+  loadUserForEdit();
+  document.getElementById('edit-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function openAddPersonModal() {
+  editMode = 'add';
+  document.getElementById('edit-modal-title').textContent        = '+ Add Person';
+  document.getElementById('edit-selector-row').style.display    = 'none';
+  document.getElementById('edit-add-preview-row').style.display = 'flex';
+  document.getElementById('edit-save-btn').textContent          = 'Add Person';
+  document.getElementById('edit-delete-btn').style.display      = 'none';
+
+  editing = { originalUsername:'', username:'', colour:'#336699', background_colour:'#d9eaf7', free_colour:'#d9eaf7', avatar:'', free_avatar:'', code:'', font_url:'', font_size:10, timetable:[] };
+  renderEditForm(true);
+  document.getElementById('edit-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function loadUserForEdit() {
+  const u   = document.getElementById('edit-user-select').value;
+  const person = data.users[u];
+  editing = {
+    originalUsername: u, username: u,
+    colour: person.colour, background_colour: person.background_colour,
+    free_colour: person.free_colour || person.background_colour,
+    avatar: person.avatar || '',
+    free_avatar: person.free_avatar || '',
+    code: person.code, font_url: person.font_url || '', font_size: person.font_size || 10,
+    timetable: JSON.parse(JSON.stringify(person.timetable))
+  };
+  renderEditForm(false);
+}
+
+function renderEditForm(clearName) {
+  document.getElementById('edit-username').value   = clearName ? '' : editing.username;
+  document.getElementById('edit-code').value       = editing.code;
+  document.getElementById('edit-colour').value     = editing.colour;
+  document.getElementById('edit-bg-colour').value  = editing.background_colour;
+  document.getElementById('edit-free-colour').value = editing.free_colour || editing.background_colour;
+  document.getElementById('edit-avatar').value     = editing.avatar || '';
+  previewAvatar(editing.avatar || '');
+  document.getElementById('edit-free-avatar').value = editing.free_avatar || '';
+  previewFreeAvatar(editing.free_avatar || '');
+  document.getElementById('edit-font-url').value   = editing.font_url;
+  document.getElementById('edit-font-size').value  = editing.font_size || 10;
+  document.getElementById('font-preview-area').style.display = 'none';
+  document.getElementById('font-active-badge').style.display = editing.font_url ? 'inline-flex' : 'none';
+  updateColourPreview();
+  renderEntries();
+}
+
+function updateColourPreview() {
+  const fg = document.getElementById('edit-colour').value;
+  const bg = document.getElementById('edit-bg-colour').value;
+  [document.getElementById('edit-colour-preview'), document.getElementById('edit-colour-preview-add')].forEach(p => {
+    if (!p) return;
+    p.style.background = bg;
+    p.style.border = `2px solid ${fg}`;
+  });
+}
+
+const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri'];
+
+function renderEntries() {
+  let html = '';
+  editing.timetable.forEach((e, i) => {
+    html += `<div class="entry-row">
+      <select style="width:52px" onchange="updateEntry(${i},'day',parseInt(this.value))">
+        ${DAY_NAMES.map((d,k)=>`<option value="${k+1}" ${e.day===k+1?'selected':''}>${d}</option>`).join('')}
+      </select>
+      <input type="text" value="${e.start||''}" placeholder="9.00" style="width:52px" oninput="updateEntry(${i},'start',this.value)">
+      <input type="text" value="${e.end||''}" placeholder="10.00" style="width:52px" oninput="updateEntry(${i},'end',this.value)">
+      <input type="text" value="${htmlEsc(e.code_name||'')}" placeholder="Code" style="width:72px" oninput="updateEntry(${i},'code_name',this.value)">
+      <input type="text" value="${htmlEsc(e.name||'')}" placeholder="Subject name" style="flex:1;min-width:80px" oninput="updateEntry(${i},'name',this.value)">
+      <input type="text" value="${htmlEsc(e.classroom||'')}" placeholder="Room" style="width:110px" oninput="updateEntry(${i},'classroom',this.value)">
+      <label class="entry-chk" style="width:38px"><input type="checkbox" ${e.break?'checked':''} onchange="updateEntry(${i},'break',this.checked)"></label>
+      <label class="entry-chk" style="width:50px"><input type="checkbox" ${e.online?'checked':''} onchange="updateEntry(${i},'online',this.checked)"></label>
+      <select style="width:52px" onchange="updateEntry(${i},'category',this.value)">
+        <option value="class" ${(!e.category||e.category==='class')?'selected':''}>🎓 Class</option>
+        <option value="free"  ${e.category==='free'?'selected':''}>🎮 Free Time</option>
+      </select>
+      <button class="del-btn" onclick="deleteEntry(${i})">&#10005;</button>
+    </div>`;
+  });
+  if (!editing.timetable.length) {
+    html = `<div style="text-align:center;padding:16px 0;color:#ccc;font-size:11px;">No entries yet — click below to add one.</div>`;
+  }
+  document.getElementById('edit-entries-list').innerHTML = html;
+}
+
+function htmlEsc(s) { return String(s).replace(/"/g,'&quot;'); }
+
+function sortEntries() {
+  editing.timetable.sort((a, b) => {
+    if (a.day !== b.day) return a.day - b.day;
+    return parseTime(a.start) - parseTime(b.start);
+  });
+}
+
+function updateEntry(i, field, value) {
+  if (field === 'break' || field === 'online') {
+    if (value) editing.timetable[i][field] = true;
+    else delete editing.timetable[i][field];
+  } else if (field === 'category') {
+    if (value === 'class') delete editing.timetable[i].category; // 'class' is default, no need to store
+    else editing.timetable[i].category = value;
+  } else {
+    editing.timetable[i][field] = value;
+  }
+  // Re-sort and re-render whenever day or time changes so the list stays ordered
+  if (field === 'day' || field === 'start') {
+    sortEntries();
+    renderEntries();
+  }
+}
+
+function addEntry() {
+  editing.timetable.push({day:1, start:'9.00', end:'10.00', code_name:'', name:'', classroom:''});
+  renderEntries();
+  const list = document.getElementById('edit-entries-list');
+  list.scrollTop = list.scrollHeight;
+}
+
+function deleteEntry(i) {
+  editing.timetable.splice(i, 1);
+  renderEntries();
+}
+
+function saveEdit() {
+  const nameInput = document.getElementById('edit-username');
+  const newName   = nameInput.value.trim();
+  const colour    = document.getElementById('edit-colour').value;
+  const bgCol     = document.getElementById('edit-bg-colour').value;
+  const freeCol   = document.getElementById('edit-free-colour').value;
+  const code      = document.getElementById('edit-code').value.trim();
+  const fontUrl   = document.getElementById('edit-font-url').value.trim();
+  const fontSize  = parseInt(document.getElementById('edit-font-size').value, 10) || 10;
+  const avatar    = document.getElementById('edit-avatar').value.trim();
+  const freeAvatar = document.getElementById('edit-free-avatar').value.trim();
+
+  if (!newName) {
+    nameInput.classList.add('shake');
+    nameInput.focus();
+    setTimeout(() => nameInput.classList.remove('shake'), 350);
+    return;
+  }
+
+  sortEntries();
+
+  if (editMode === 'add') {
+    if (data.users[newName]) {
+      nameInput.style.borderColor = '#f55';
+      nameInput.focus();
+      setTimeout(() => nameInput.style.borderColor = '', 1500);
+      return;
+    }
+    data.users[newName] = { colour, background_colour: bgCol, free_colour: freeCol, avatar, free_avatar: freeAvatar, code, font_url: fontUrl, font_size: fontSize, timetable: editing.timetable, visibility: true };
+  } else {
+    const old     = editing.originalUsername;
+    const vis     = data.users[old].visibility;
+    const userData = { colour, background_colour: bgCol, free_colour: freeCol, avatar, free_avatar: freeAvatar, code, font_url: fontUrl, font_size: fontSize, timetable: editing.timetable, visibility: vis };
+    if (newName !== old) {
+      if (data.users[newName]) {
+        nameInput.style.borderColor = '#f55';
+        nameInput.focus();
+        setTimeout(() => nameInput.style.borderColor = '', 1500);
+        return;
+      }
+      // Transfer font slot to new name if no URL change
+      if (loadedFonts[old]) { delete loadedFonts[old]; }
+      delete data.users[old];
+    }
+    data.users[newName] = userData;
+  }
+
+  saveDataToStorage();
+  pushToGitHub();
+  closeEditModal();
+  updateToolbar();
+  renderLegend();
+  renderTable();
+
+  // Load/reload font in background, then re-render
+  loadUserFont(newName, fontUrl).then(() => {
+    renderLegend();
+    renderTable();
+  });
+}
+
+function deletePerson() {
+  const u = document.getElementById('edit-user-select').value;
+  if (!confirm(`Remove ${u} from the timetable?`)) return;
+  delete loadedFonts[u];
+  delete data.users[u];
+  saveDataToStorage();
+  pushToGitHub();
+  closeEditModal();
+  updateToolbar();
+  renderLegend();
+  renderTable();
+}
+
+// ---
+// Events list
+// ---
+let events = [];
+
+function openEventsModal() {
+  renderEventsList();
+  document.getElementById('events-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeEventsModal() {
+  document.getElementById('events-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function renderEventsList() {
+  const el = document.getElementById('events-list');
+  if (!events.length) {
+    el.innerHTML = `<div class="event-empty">No events yet. Add one below.</div>`;
+    return;
+  }
+  const sorted = [...events].sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  el.innerHTML = sorted.map(ev => {
+    const idx     = events.indexOf(ev);
+    const dateStr = ev.date
+      ? new Date(ev.date + 'T00:00:00').toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short', year:'numeric'})
+      : '—';
+    return `<div class="event-card" style="border-left-color:${ev.colour}">
+      <div class="event-dot" style="background:${ev.colour}"></div>
+      <div class="event-card-body">
+        <div class="event-card-title">${htmlEsc(ev.title)}</div>
+        <div class="event-card-date">${dateStr}</div>
+        ${ev.note ? `<div class="event-card-note">${htmlEsc(ev.note)}</div>` : ''}
+      </div>
+      <button class="del-btn" onclick="deleteEvent(${idx})">&#10005;</button>
+    </div>`;
+  }).join('');
+}
+function addEvent() {
+  const title  = document.getElementById('ev-title').value.trim();
+  const date   = document.getElementById('ev-date').value;
+  const colour = document.getElementById('ev-colour').value;
+  const note   = document.getElementById('ev-note').value.trim();
+  if (!title) {
+    const t = document.getElementById('ev-title');
+    t.classList.add('shake');
+    t.focus();
+    setTimeout(() => t.classList.remove('shake'), 350);
+    return;
+  }
+  events.push({ title, date, colour, note });
+  document.getElementById('ev-title').value = '';
+  document.getElementById('ev-date').value  = '';
+  document.getElementById('ev-note').value  = '';
+  pushToGitHub();
+  markUnsaved();
+  renderEventsList();
+}
+function deleteEvent(i) {
+  events.splice(i, 1);
+  pushToGitHub();
+  markUnsaved();
+  renderEventsList();
+}
+
+// Init
+loadDarkMode();
+loadServerConfig();
+updateToolbar();
+renderLegend();
+renderTable();
+
+// Load all custom fonts, then re-render with them applied
+loadAllFonts().then(() => {
+  renderLegend();
+  renderTable();
+  // Only allow the save banner to appear after everything has initialised
+  pageReady = true;
+});
 </script>
 
 
 
-
-
-
-</html>
+<div id="give-freely-root-ejkiikneibegknkgimmihdpcbcedgmpo" class="give-freely-root" data-extension-id="ejkiikneibegknkgimmihdpcbcedgmpo" data-extension-name="Volume Booster" style="display: block;"></div></body></html>
